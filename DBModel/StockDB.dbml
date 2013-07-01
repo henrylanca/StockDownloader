@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="StockData" Class="StockDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=spw-devserver;Initial Catalog=StockData;Persist Security Info=True;User ID=stocksa;MultipleActiveResultSets=True" SettingsObjectName="DBModel.Properties.Settings" SettingsPropertyName="StockDataConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.StockSymbol" Member="StockSymbols">
+    <Type Name="StockSymbol">
+      <Column Name="Symbol" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="StockName" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Sector" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="Country" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ETF" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HasFuture" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Association Name="StockSymbol_StockPeak" Member="StockPeaks" ThisKey="Symbol" OtherKey="Symbol" Type="StockPeak" />
+      <Association Name="StockSymbol_StockPick" Member="StockPicks" ThisKey="Symbol" OtherKey="Symbol" Type="StockPick" />
+      <Association Name="StockSymbol_StockInformation" Member="StockInformation" ThisKey="Symbol" OtherKey="Symbol" Type="StockInformation" Cardinality="One" />
+      <Association Name="StockSymbol_TradingGame_StockPerformance" Member="TradingGame_StockPerformances" ThisKey="Symbol" OtherKey="Symbol" Type="TradingGame_StockPerformance" />
+      <Association Name="StockSymbol_StockQuote" Member="StockQuotes" ThisKey="Symbol" OtherKey="Symbol" Type="StockQuote" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StockPeak" Member="StockPeaks">
+    <Type Name="StockPeak">
+      <Column Name="StockPeakID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Symbol" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="PeakDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="PeakType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TimeFrame" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Association Name="StockSymbol_StockPeak" Member="StockSymbol" ThisKey="Symbol" OtherKey="Symbol" Type="StockSymbol" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StockPick" Member="StockPicks">
+    <Type Name="StockPick">
+      <Column Name="Symbol" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="PickDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="PickType" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="PickKey" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="StockSymbol_StockPick" Member="StockSymbol" ThisKey="Symbol" OtherKey="Symbol" Type="StockSymbol" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StockInformation" Member="StockInformations">
+    <Type Name="StockInformation">
+      <Column Name="Symbol" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Divident" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="MarKetCap" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="PriceSales" Type="System.Decimal" DbType="Decimal(18,4)" CanBeNull="true" />
+      <Column Name="PriceBooks" Type="System.Decimal" DbType="Decimal(18,4)" CanBeNull="true" />
+      <Column Name="PE" Type="System.Decimal" DbType="Decimal(18,4)" CanBeNull="true" />
+      <Column Name="DivedentPayDay" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="PEG" Type="System.Decimal" DbType="Decimal(18,4)" CanBeNull="true" />
+      <Column Name="ShortRatio" Type="System.Decimal" DbType="Decimal(18,4)" CanBeNull="true" />
+      <Column Name="DividentYield" Type="System.Decimal" DbType="Decimal(18,4)" CanBeNull="true" />
+      <Column Name="AvgVolume" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="StockSymbol_StockInformation" Member="StockSymbol" ThisKey="Symbol" OtherKey="Symbol" Type="StockSymbol" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TradingGame_StockPerformance" Member="TradingGame_StockPerformances">
+    <Type Name="TradingGame_StockPerformance">
+      <Column Name="Symbol" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ThreeMonth" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="SixMonth" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="TwelveMonth" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Association Name="StockSymbol_TradingGame_StockPerformance" Member="StockSymbol" ThisKey="Symbol" OtherKey="Symbol" Type="StockSymbol" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StockQuote" Member="StockQuotes">
+    <Type Name="StockQuote">
+      <Column Name="QuoteID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Symbol" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="QuoteDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="OpenValue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="CloseValue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="HighValue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="LowValue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Volume" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      <Column Name="TimeFrame" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="MAD50" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="MAD200" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Association Name="StockSymbol_StockQuote" Member="StockSymbol" ThisKey="Symbol" OtherKey="Symbol" Type="StockSymbol" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
