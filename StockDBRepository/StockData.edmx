@@ -1,0 +1,574 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="StockDataModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="StockDataModelStoreContainer">
+          <EntitySet Name="StockCountry" EntityType="StockDataModel.Store.StockCountry" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockIndex" EntityType="StockDataModel.Store.StockIndex" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockIndexComponents" EntityType="StockDataModel.Store.StockIndexComponents" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockInformation" EntityType="StockDataModel.Store.StockInformation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockPeak" EntityType="StockDataModel.Store.StockPeak" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockPick" EntityType="StockDataModel.Store.StockPick" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockPickType" EntityType="StockDataModel.Store.StockPickType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockQuote" EntityType="StockDataModel.Store.StockQuote" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockSymbol" EntityType="StockDataModel.Store.StockSymbol" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_StockIndexComponents_StockIndex" Association="StockDataModel.Store.FK_StockIndexComponents_StockIndex">
+            <End Role="StockIndex" EntitySet="StockIndex" />
+            <End Role="StockIndexComponents" EntitySet="StockIndexComponents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockIndexComponents_StockSymbol" Association="StockDataModel.Store.FK_StockIndexComponents_StockSymbol">
+            <End Role="StockSymbol" EntitySet="StockSymbol" />
+            <End Role="StockIndexComponents" EntitySet="StockIndexComponents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockInformation_StockSymbol1" Association="StockDataModel.Store.FK_StockInformation_StockSymbol1">
+            <End Role="StockSymbol" EntitySet="StockSymbol" />
+            <End Role="StockInformation" EntitySet="StockInformation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockPeak_StockSymbol" Association="StockDataModel.Store.FK_StockPeak_StockSymbol">
+            <End Role="StockSymbol" EntitySet="StockSymbol" />
+            <End Role="StockPeak" EntitySet="StockPeak" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockPick_StockPickType" Association="StockDataModel.Store.FK_StockPick_StockPickType">
+            <End Role="StockPickType" EntitySet="StockPickType" />
+            <End Role="StockPick" EntitySet="StockPick" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockPick_StockSymbol" Association="StockDataModel.Store.FK_StockPick_StockSymbol">
+            <End Role="StockSymbol" EntitySet="StockSymbol" />
+            <End Role="StockPick" EntitySet="StockPick" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockQuote_StockSymbol" Association="StockDataModel.Store.FK_StockQuote_StockSymbol">
+            <End Role="StockSymbol" EntitySet="StockSymbol" />
+            <End Role="StockQuote" EntitySet="StockQuote" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="StockCountry">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="StockIndex">
+          <Key>
+            <PropertyRef Name="IndexName" />
+          </Key>
+          <Property Name="IndexName" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="CountryCode" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="StockIndexComponents">
+          <Key>
+            <PropertyRef Name="IndexName" />
+            <PropertyRef Name="Symbol" />
+          </Key>
+          <Property Name="IndexName" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Symbol" Type="varchar" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="StockInformation">
+          <Key>
+            <PropertyRef Name="Symbol" />
+          </Key>
+          <Property Name="Symbol" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="Divident" Type="money" />
+          <Property Name="MarKetCap" Type="money" />
+          <Property Name="PriceSales" Type="decimal" Scale="4" />
+          <Property Name="PriceBooks" Type="decimal" Scale="4" />
+          <Property Name="PE" Type="decimal" Scale="4" />
+          <Property Name="DivedentPayDay" Type="smalldatetime" />
+          <Property Name="PEG" Type="decimal" Scale="4" />
+          <Property Name="ShortRatio" Type="decimal" Scale="4" />
+          <Property Name="DividentYield" Type="decimal" Scale="4" />
+          <Property Name="AvgVolume" Type="int" />
+        </EntityType>
+        <EntityType Name="StockPeak">
+          <Key>
+            <PropertyRef Name="StockPeakID" />
+          </Key>
+          <Property Name="StockPeakID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="PeakDate" Type="smalldatetime" Nullable="false" />
+          <Property Name="PeakType" Type="int" Nullable="false" />
+          <Property Name="TimeFrame" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StockPick">
+          <Key>
+            <PropertyRef Name="PickKey" />
+          </Key>
+          <Property Name="Symbol" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="PickDate" Type="smalldatetime" Nullable="false" />
+          <Property Name="PickType" Type="smallint" Nullable="false" />
+          <Property Name="PickKey" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="StockPickType">
+          <Key>
+            <PropertyRef Name="PickType" />
+          </Key>
+          <Property Name="PickType" Type="smallint" Nullable="false" />
+          <Property Name="TypeName" Type="varchar" Nullable="false" MaxLength="30" />
+          <Property Name="Description" Type="varchar" MaxLength="400" />
+        </EntityType>
+        <EntityType Name="StockQuote">
+          <Key>
+            <PropertyRef Name="QuoteID" />
+          </Key>
+          <Property Name="QuoteID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="QuoteDate" Type="smalldatetime" Nullable="false" />
+          <Property Name="OpenValue" Type="money" Nullable="false" />
+          <Property Name="CloseValue" Type="money" Nullable="false" />
+          <Property Name="HighValue" Type="money" Nullable="false" />
+          <Property Name="LowValue" Type="money" Nullable="false" />
+          <Property Name="Volume" Type="bigint" Nullable="false" />
+          <Property Name="TimeFrame" Type="smallint" Nullable="false" />
+          <Property Name="MAD50" Type="money" />
+          <Property Name="MAD200" Type="money" />
+        </EntityType>
+        <EntityType Name="StockSymbol">
+          <Key>
+            <PropertyRef Name="Symbol" />
+          </Key>
+          <Property Name="Symbol" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="StockName" Type="varchar" Nullable="false" MaxLength="200" />
+          <Property Name="Sector" Type="varchar" MaxLength="100" />
+          <Property Name="CountryCode" Type="varchar" MaxLength="10" />
+          <Property Name="ETF" Type="int" />
+          <Property Name="HasFuture" Type="bit" />
+          <Property Name="StartDate" Type="smalldatetime" />
+          <Property Name="EndDate" Type="smalldatetime" />
+        </EntityType>
+        <Association Name="FK_StockIndexComponents_StockIndex">
+          <End Role="StockIndex" Type="StockDataModel.Store.StockIndex" Multiplicity="1" />
+          <End Role="StockIndexComponents" Type="StockDataModel.Store.StockIndexComponents" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockIndex">
+              <PropertyRef Name="IndexName" />
+            </Principal>
+            <Dependent Role="StockIndexComponents">
+              <PropertyRef Name="IndexName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockIndexComponents_StockSymbol">
+          <End Role="StockSymbol" Type="StockDataModel.Store.StockSymbol" Multiplicity="1" />
+          <End Role="StockIndexComponents" Type="StockDataModel.Store.StockIndexComponents" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockIndexComponents">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockInformation_StockSymbol1">
+          <End Role="StockSymbol" Type="StockDataModel.Store.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockInformation" Type="StockDataModel.Store.StockInformation" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockInformation">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockPeak_StockSymbol">
+          <End Role="StockSymbol" Type="StockDataModel.Store.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockPeak" Type="StockDataModel.Store.StockPeak" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockPeak">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockPick_StockPickType">
+          <End Role="StockPickType" Type="StockDataModel.Store.StockPickType" Multiplicity="1" />
+          <End Role="StockPick" Type="StockDataModel.Store.StockPick" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockPickType">
+              <PropertyRef Name="PickType" />
+            </Principal>
+            <Dependent Role="StockPick">
+              <PropertyRef Name="PickType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockPick_StockSymbol">
+          <End Role="StockSymbol" Type="StockDataModel.Store.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockPick" Type="StockDataModel.Store.StockPick" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockPick">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockQuote_StockSymbol">
+          <End Role="StockSymbol" Type="StockDataModel.Store.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockQuote" Type="StockDataModel.Store.StockQuote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockQuote">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="StockDataModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="StockDataEntities" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="StockInformations" EntityType="StockDataModel.StockInformation" />
+          <EntitySet Name="StockPeaks" EntityType="StockDataModel.StockPeak" />
+          <EntitySet Name="StockPicks" EntityType="StockDataModel.StockPick" />
+          <EntitySet Name="StockPickTypes" EntityType="StockDataModel.StockPickType" />
+          <EntitySet Name="StockQuotes" EntityType="StockDataModel.StockQuote" />
+          <EntitySet Name="StockSymbols" EntityType="StockDataModel.StockSymbol" />
+          <AssociationSet Name="FK_StockInformation_StockSymbol1" Association="StockDataModel.FK_StockInformation_StockSymbol1">
+            <End Role="StockSymbol" EntitySet="StockSymbols" />
+            <End Role="StockInformation" EntitySet="StockInformations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockPeak_StockSymbol" Association="StockDataModel.FK_StockPeak_StockSymbol">
+            <End Role="StockSymbol" EntitySet="StockSymbols" />
+            <End Role="StockPeak" EntitySet="StockPeaks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockPick_StockPickType" Association="StockDataModel.FK_StockPick_StockPickType">
+            <End Role="StockPickType" EntitySet="StockPickTypes" />
+            <End Role="StockPick" EntitySet="StockPicks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockPick_StockSymbol" Association="StockDataModel.FK_StockPick_StockSymbol">
+            <End Role="StockSymbol" EntitySet="StockSymbols" />
+            <End Role="StockPick" EntitySet="StockPicks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockQuote_StockSymbol" Association="StockDataModel.FK_StockQuote_StockSymbol">
+            <End Role="StockSymbol" EntitySet="StockSymbols" />
+            <End Role="StockQuote" EntitySet="StockQuotes" />
+          </AssociationSet>
+          <EntitySet Name="StockIndexes" EntityType="StockDataModel.StockIndex" />
+          <AssociationSet Name="StockIndexComponents" Association="StockDataModel.StockIndexComponents">
+            <End Role="StockIndex" EntitySet="StockIndexes" />
+            <End Role="StockSymbol" EntitySet="StockSymbols" />
+          </AssociationSet>
+          <EntitySet Name="StockCountries" EntityType="StockDataModel.StockCountry" />
+        </EntityContainer>
+        <EntityType Name="StockInformation">
+          <Key>
+            <PropertyRef Name="Symbol" />
+          </Key>
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="Divident" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="MarKetCap" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="PriceSales" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="PriceBooks" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="PE" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="DivedentPayDay" Type="DateTime" Precision="0" />
+          <Property Name="PEG" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="ShortRatio" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="DividentYield" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="AvgVolume" Type="Int32" />
+          <NavigationProperty Name="StockSymbol" Relationship="StockDataModel.FK_StockInformation_StockSymbol1" FromRole="StockInformation" ToRole="StockSymbol" />
+        </EntityType>
+        <EntityType Name="StockPeak">
+          <Key>
+            <PropertyRef Name="StockPeakID" />
+          </Key>
+          <Property Name="StockPeakID" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="PeakDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PeakType" Type="Int32" Nullable="false" />
+          <Property Name="TimeFrame" Type="Int16" Nullable="false" />
+          <NavigationProperty Name="StockSymbol" Relationship="StockDataModel.FK_StockPeak_StockSymbol" FromRole="StockPeak" ToRole="StockSymbol" />
+        </EntityType>
+        <EntityType Name="StockPick">
+          <Key>
+            <PropertyRef Name="PickKey" />
+          </Key>
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="PickDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PickType" Type="Int16" Nullable="false" />
+          <Property Name="PickKey" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="StockPickType" Relationship="StockDataModel.FK_StockPick_StockPickType" FromRole="StockPick" ToRole="StockPickType" />
+          <NavigationProperty Name="StockSymbol" Relationship="StockDataModel.FK_StockPick_StockSymbol" FromRole="StockPick" ToRole="StockSymbol" />
+        </EntityType>
+        <EntityType Name="StockPickType">
+          <Key>
+            <PropertyRef Name="PickType" />
+          </Key>
+          <Property Name="PickType" Type="Int16" Nullable="false" />
+          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="400" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="StockPicks" Relationship="StockDataModel.FK_StockPick_StockPickType" FromRole="StockPickType" ToRole="StockPick" />
+        </EntityType>
+        <EntityType Name="StockQuote">
+          <Key>
+            <PropertyRef Name="QuoteID" />
+          </Key>
+          <Property Name="QuoteID" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="QuoteDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="OpenValue" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="CloseValue" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="HighValue" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="LowValue" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Volume" Type="Int64" Nullable="false" />
+          <Property Name="TimeFrame" Type="Int16" Nullable="false" />
+          <Property Name="MAD50" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="MAD200" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="StockSymbol" Relationship="StockDataModel.FK_StockQuote_StockSymbol" FromRole="StockQuote" ToRole="StockSymbol" />
+        </EntityType>
+        <EntityType Name="StockSymbol">
+          <Key>
+            <PropertyRef Name="Symbol" />
+          </Key>
+          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="StockName" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Name="Sector" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="ETF" Type="Int32" />
+          <Property Name="HasFuture" Type="Boolean" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="StockInformation" Relationship="StockDataModel.FK_StockInformation_StockSymbol1" FromRole="StockSymbol" ToRole="StockInformation" />
+          <NavigationProperty Name="StockPeaks" Relationship="StockDataModel.FK_StockPeak_StockSymbol" FromRole="StockSymbol" ToRole="StockPeak" />
+          <NavigationProperty Name="StockPicks" Relationship="StockDataModel.FK_StockPick_StockSymbol" FromRole="StockSymbol" ToRole="StockPick" />
+          <NavigationProperty Name="StockQuotes" Relationship="StockDataModel.FK_StockQuote_StockSymbol" FromRole="StockSymbol" ToRole="StockQuote" />
+          <NavigationProperty Name="StockIndexes" Relationship="StockDataModel.StockIndexComponents" FromRole="StockSymbol" ToRole="StockIndex" />
+          <Property Type="String" Name="CountryCode" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_StockInformation_StockSymbol1">
+          <End Role="StockSymbol" Type="StockDataModel.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockInformation" Type="StockDataModel.StockInformation" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockInformation">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockPeak_StockSymbol">
+          <End Role="StockSymbol" Type="StockDataModel.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockPeak" Type="StockDataModel.StockPeak" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockPeak">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockPick_StockPickType">
+          <End Role="StockPickType" Type="StockDataModel.StockPickType" Multiplicity="1" />
+          <End Role="StockPick" Type="StockDataModel.StockPick" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockPickType">
+              <PropertyRef Name="PickType" />
+            </Principal>
+            <Dependent Role="StockPick">
+              <PropertyRef Name="PickType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockPick_StockSymbol">
+          <End Role="StockSymbol" Type="StockDataModel.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockPick" Type="StockDataModel.StockPick" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockPick">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockQuote_StockSymbol">
+          <End Role="StockSymbol" Type="StockDataModel.StockSymbol" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StockQuote" Type="StockDataModel.StockQuote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockSymbol">
+              <PropertyRef Name="Symbol" />
+            </Principal>
+            <Dependent Role="StockQuote">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="StockIndex">
+          <Key>
+            <PropertyRef Name="IndexName" />
+          </Key>
+          <Property Type="String" Name="IndexName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="StockSymbols" Relationship="StockDataModel.StockIndexComponents" FromRole="StockIndex" ToRole="StockSymbol" />
+          <Property Type="String" Name="CountryCode" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="StockIndexComponents">
+          <End Type="StockDataModel.StockIndex" Role="StockIndex" Multiplicity="*" />
+          <End Type="StockDataModel.StockSymbol" Role="StockSymbol" Multiplicity="*" />
+        </Association>
+        <EntityType Name="StockCountry">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Type="String" Name="Code" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FullName" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="StockDataModelStoreContainer" CdmEntityContainer="StockDataEntities">
+          <EntitySetMapping Name="StockInformations">
+            <EntityTypeMapping TypeName="StockDataModel.StockInformation">
+              <MappingFragment StoreEntitySet="StockInformation">
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="Divident" ColumnName="Divident" />
+                <ScalarProperty Name="MarKetCap" ColumnName="MarKetCap" />
+                <ScalarProperty Name="PriceSales" ColumnName="PriceSales" />
+                <ScalarProperty Name="PriceBooks" ColumnName="PriceBooks" />
+                <ScalarProperty Name="PE" ColumnName="PE" />
+                <ScalarProperty Name="DivedentPayDay" ColumnName="DivedentPayDay" />
+                <ScalarProperty Name="PEG" ColumnName="PEG" />
+                <ScalarProperty Name="ShortRatio" ColumnName="ShortRatio" />
+                <ScalarProperty Name="DividentYield" ColumnName="DividentYield" />
+                <ScalarProperty Name="AvgVolume" ColumnName="AvgVolume" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockPeaks">
+            <EntityTypeMapping TypeName="StockDataModel.StockPeak">
+              <MappingFragment StoreEntitySet="StockPeak">
+                <ScalarProperty Name="StockPeakID" ColumnName="StockPeakID" />
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="PeakDate" ColumnName="PeakDate" />
+                <ScalarProperty Name="PeakType" ColumnName="PeakType" />
+                <ScalarProperty Name="TimeFrame" ColumnName="TimeFrame" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockPicks">
+            <EntityTypeMapping TypeName="StockDataModel.StockPick">
+              <MappingFragment StoreEntitySet="StockPick">
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="PickDate" ColumnName="PickDate" />
+                <ScalarProperty Name="PickType" ColumnName="PickType" />
+                <ScalarProperty Name="PickKey" ColumnName="PickKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockPickTypes">
+            <EntityTypeMapping TypeName="StockDataModel.StockPickType">
+              <MappingFragment StoreEntitySet="StockPickType">
+                <ScalarProperty Name="PickType" ColumnName="PickType" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockQuotes">
+            <EntityTypeMapping TypeName="StockDataModel.StockQuote">
+              <MappingFragment StoreEntitySet="StockQuote">
+                <ScalarProperty Name="QuoteID" ColumnName="QuoteID" />
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="QuoteDate" ColumnName="QuoteDate" />
+                <ScalarProperty Name="OpenValue" ColumnName="OpenValue" />
+                <ScalarProperty Name="CloseValue" ColumnName="CloseValue" />
+                <ScalarProperty Name="HighValue" ColumnName="HighValue" />
+                <ScalarProperty Name="LowValue" ColumnName="LowValue" />
+                <ScalarProperty Name="Volume" ColumnName="Volume" />
+                <ScalarProperty Name="TimeFrame" ColumnName="TimeFrame" />
+                <ScalarProperty Name="MAD50" ColumnName="MAD50" />
+                <ScalarProperty Name="MAD200" ColumnName="MAD200" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockSymbols">
+            <EntityTypeMapping TypeName="StockDataModel.StockSymbol">
+              <MappingFragment StoreEntitySet="StockSymbol">
+                <ScalarProperty Name="CountryCode" ColumnName="CountryCode" />
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="StockName" ColumnName="StockName" />
+                <ScalarProperty Name="Sector" ColumnName="Sector" />
+                <ScalarProperty Name="ETF" ColumnName="ETF" />
+                <ScalarProperty Name="HasFuture" ColumnName="HasFuture" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockIndexes">
+            <EntityTypeMapping TypeName="StockDataModel.StockIndex">
+              <MappingFragment StoreEntitySet="StockIndex">
+                <ScalarProperty Name="CountryCode" ColumnName="CountryCode" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IndexName" ColumnName="IndexName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="StockIndexComponents" TypeName="StockDataModel.StockIndexComponents" StoreEntitySet="StockIndexComponents">
+            <EndProperty Name="StockSymbol">
+              <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+            </EndProperty>
+            <EndProperty Name="StockIndex">
+              <ScalarProperty Name="IndexName" ColumnName="IndexName" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="StockCountries">
+            <EntityTypeMapping TypeName="StockDataModel.StockCountry">
+              <MappingFragment StoreEntitySet="StockCountry">
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
