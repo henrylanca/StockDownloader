@@ -27,7 +27,10 @@ namespace StockDownloader.StockDBRepository
 
         public List<StockCountry> GetCountryList()
         {
-            return null;
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                return context.StockCountries.ToList();
+            }
         }
 
     }

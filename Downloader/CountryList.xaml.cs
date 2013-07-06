@@ -10,19 +10,27 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using StockDownloader.StockDBRepository;
 
 namespace Downloader
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for CountryList.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CountryList : Window
     {
-        public MainWindow()
+        private List<StockCountry> countries;
+
+        public CountryList()
         {
             InitializeComponent();
+
+            StockCountryRepository repository = new StockCountryRepository();
+            countries = repository.GetCountryList();
+
+            this.lstCountry.ItemsSource = countries;
         }
     }
 }
