@@ -28,16 +28,34 @@ namespace StockDownloader.StockDBRepository
             }
         }
 
-        public List<StockCountry> GetAllCountries()
+        public List<StockIndex> GetAllIndexes()
         {
-            List<StockCountry> countryList = new List<StockCountry>();
+            List<StockIndex> indexList = new List<StockIndex>();
 
             using (StockDataEntities context = new StockDataEntities())
             {
-                countryList = context.StockCountries.ToList();
+                indexList = context.StockIndexes.OrderBy(i => i.IndexName).ToList();
             }
 
-            return countryList;
+            return indexList;
+        }
+
+        public void DeleteIndex(StockIndex stockIndex)
+        {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                StockIndex existingIndex = context.StockIndexes
+                    .Where(i => String.Compare(i.IndexName, stockIndex.IndexName, true) == 0).SingleOrDefault();
+
+                if (existingIndex != null)
+                {
+                    context.StockIndexes.Remove(existingIndex);
+
+                    context.SaveChanges();
+                }
+
+
+            }
         }
 
     }

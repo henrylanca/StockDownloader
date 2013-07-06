@@ -61,10 +61,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="IndexList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CountryList.xaml.cs">
       <DependentUpon>CountryList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IndexList.xaml.cs">
+      <DependentUpon>IndexList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

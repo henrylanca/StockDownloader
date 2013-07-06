@@ -111,8 +111,6 @@ namespace Downloader
             {
                 return true;
             }
-
-
         }
 
         private void ClearInput()
