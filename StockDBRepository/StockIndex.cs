@@ -24,5 +24,6 @@ namespace StockDownloader.StockDBRepository
         public string CountryCode { get; set; }
     
         public virtual ICollection<StockSymbol> StockSymbols { get; set; }
+        public virtual StockCountry StockCountry { get; set; }
     }
 }

@@ -10,7 +10,24 @@ namespace StockDownloader.StockDBRepository
     {
         public void UpdateCountry(StockCountry country)
         {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                StockCountry sCountry = context.StockCountries
+                    .Where(c => (string.Compare(c.Code, country.Code, true) == 0)).SingleOrDefault();
 
+
+                if (sCountry != null)
+                    sCountry.FullName = country.FullName;
+                else
+                    context.StockCountries.Add(country);
+
+                context.SaveChanges();
+            }
+        }
+
+        public List<StockCountry> GetCountryList()
+        {
+            return null;
         }
 
     }

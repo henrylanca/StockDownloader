@@ -15,6 +15,10 @@
           <EntitySet Name="StockPickType" EntityType="StockDataModel.Store.StockPickType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StockQuote" EntityType="StockDataModel.Store.StockQuote" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StockSymbol" EntityType="StockDataModel.Store.StockSymbol" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_StockIndex_StockCountry" Association="StockDataModel.Store.FK_StockIndex_StockCountry">
+            <End Role="StockCountry" EntitySet="StockCountry" />
+            <End Role="StockIndex" EntitySet="StockIndex" />
+          </AssociationSet>
           <AssociationSet Name="FK_StockIndexComponents_StockIndex" Association="StockDataModel.Store.FK_StockIndexComponents_StockIndex">
             <End Role="StockIndex" EntitySet="StockIndex" />
             <End Role="StockIndexComponents" EntitySet="StockIndexComponents" />
@@ -42,6 +46,10 @@
           <AssociationSet Name="FK_StockQuote_StockSymbol" Association="StockDataModel.Store.FK_StockQuote_StockSymbol">
             <End Role="StockSymbol" EntitySet="StockSymbol" />
             <End Role="StockQuote" EntitySet="StockQuote" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockSymbol_StockCountry" Association="StockDataModel.Store.FK_StockSymbol_StockCountry">
+            <End Role="StockCountry" EntitySet="StockCountry" />
+            <End Role="StockSymbol" EntitySet="StockSymbol" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="StockCountry">
@@ -133,12 +141,24 @@
           <Property Name="Symbol" Type="varchar" Nullable="false" MaxLength="20" />
           <Property Name="StockName" Type="varchar" Nullable="false" MaxLength="200" />
           <Property Name="Sector" Type="varchar" MaxLength="100" />
-          <Property Name="CountryCode" Type="varchar" MaxLength="10" />
+          <Property Name="Country" Type="varchar" MaxLength="10" />
           <Property Name="ETF" Type="int" />
           <Property Name="HasFuture" Type="bit" />
           <Property Name="StartDate" Type="smalldatetime" />
           <Property Name="EndDate" Type="smalldatetime" />
         </EntityType>
+        <Association Name="FK_StockIndex_StockCountry">
+          <End Role="StockCountry" Type="StockDataModel.Store.StockCountry" Multiplicity="0..1" />
+          <End Role="StockIndex" Type="StockDataModel.Store.StockIndex" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockCountry">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="StockIndex">
+              <PropertyRef Name="CountryCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_StockIndexComponents_StockIndex">
           <End Role="StockIndex" Type="StockDataModel.Store.StockIndex" Multiplicity="1" />
           <End Role="StockIndexComponents" Type="StockDataModel.Store.StockIndexComponents" Multiplicity="*" />
@@ -231,6 +251,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_StockSymbol_StockCountry">
+          <End Role="StockCountry" Type="StockDataModel.Store.StockCountry" Multiplicity="0..1" />
+          <End Role="StockSymbol" Type="StockDataModel.Store.StockSymbol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockCountry">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="StockSymbol">
+              <PropertyRef Name="Country" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -268,6 +300,14 @@
             <End Role="StockSymbol" EntitySet="StockSymbols" />
           </AssociationSet>
           <EntitySet Name="StockCountries" EntityType="StockDataModel.StockCountry" />
+          <AssociationSet Name="FK_StockIndex_StockCountry" Association="StockDataModel.FK_StockIndex_StockCountry">
+            <End Role="StockCountry" EntitySet="StockCountries" />
+            <End Role="StockIndex" EntitySet="StockIndexes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockSymbol_StockCountry" Association="StockDataModel.FK_StockSymbol_StockCountry">
+            <End Role="StockCountry" EntitySet="StockCountries" />
+            <End Role="StockSymbol" EntitySet="StockSymbols" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="StockInformation">
           <Key>
@@ -350,7 +390,8 @@
           <NavigationProperty Name="StockPicks" Relationship="StockDataModel.FK_StockPick_StockSymbol" FromRole="StockSymbol" ToRole="StockPick" />
           <NavigationProperty Name="StockQuotes" Relationship="StockDataModel.FK_StockQuote_StockSymbol" FromRole="StockSymbol" ToRole="StockQuote" />
           <NavigationProperty Name="StockIndexes" Relationship="StockDataModel.StockIndexComponents" FromRole="StockSymbol" ToRole="StockIndex" />
-          <Property Type="String" Name="CountryCode" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Country" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="StockCountry" Relationship="StockDataModel.FK_StockSymbol_StockCountry" FromRole="StockSymbol" ToRole="StockCountry" />
         </EntityType>
         <Association Name="FK_StockInformation_StockSymbol1">
           <End Role="StockSymbol" Type="StockDataModel.StockSymbol" Multiplicity="1">
@@ -428,6 +469,7 @@
           <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="StockSymbols" Relationship="StockDataModel.StockIndexComponents" FromRole="StockIndex" ToRole="StockSymbol" />
           <Property Type="String" Name="CountryCode" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="StockCountry" Relationship="StockDataModel.FK_StockIndex_StockCountry" FromRole="StockIndex" ToRole="StockCountry" />
         </EntityType>
         <Association Name="StockIndexComponents">
           <End Type="StockDataModel.StockIndex" Role="StockIndex" Multiplicity="*" />
@@ -439,7 +481,33 @@
           </Key>
           <Property Type="String" Name="Code" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="FullName" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="StockIndexes" Relationship="StockDataModel.FK_StockIndex_StockCountry" FromRole="StockCountry" ToRole="StockIndex" />
+          <NavigationProperty Name="StockSymbols" Relationship="StockDataModel.FK_StockSymbol_StockCountry" FromRole="StockCountry" ToRole="StockSymbol" />
         </EntityType>
+        <Association Name="FK_StockIndex_StockCountry">
+          <End Type="StockDataModel.StockCountry" Role="StockCountry" Multiplicity="0..1" />
+          <End Type="StockDataModel.StockIndex" Role="StockIndex" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockCountry">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="StockIndex">
+              <PropertyRef Name="CountryCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockSymbol_StockCountry">
+          <End Type="StockDataModel.StockCountry" Role="StockCountry" Multiplicity="0..1" />
+          <End Type="StockDataModel.StockSymbol" Role="StockSymbol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockCountry">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="StockSymbol">
+              <PropertyRef Name="Country" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -513,7 +581,7 @@
           <EntitySetMapping Name="StockSymbols">
             <EntityTypeMapping TypeName="StockDataModel.StockSymbol">
               <MappingFragment StoreEntitySet="StockSymbol">
-                <ScalarProperty Name="CountryCode" ColumnName="CountryCode" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
                 <ScalarProperty Name="Symbol" ColumnName="Symbol" />
                 <ScalarProperty Name="StockName" ColumnName="StockName" />
                 <ScalarProperty Name="Sector" ColumnName="Sector" />

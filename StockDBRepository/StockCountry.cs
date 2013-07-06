@@ -14,7 +14,16 @@ namespace StockDownloader.StockDBRepository
     
     public partial class StockCountry
     {
+        public StockCountry()
+        {
+            this.StockIndexes = new HashSet<StockIndex>();
+            this.StockSymbols = new HashSet<StockSymbol>();
+        }
+    
         public string Code { get; set; }
         public string FullName { get; set; }
+    
+        public virtual ICollection<StockIndex> StockIndexes { get; set; }
+        public virtual ICollection<StockSymbol> StockSymbols { get; set; }
     }
 }

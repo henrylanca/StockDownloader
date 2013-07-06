@@ -29,12 +29,13 @@ namespace StockDownloader.StockDBRepository
         public Nullable<bool> HasFuture { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
-        public string CountryCode { get; set; }
+        public string Country { get; set; }
     
         public virtual StockInformation StockInformation { get; set; }
         public virtual ICollection<StockPeak> StockPeaks { get; set; }
         public virtual ICollection<StockPick> StockPicks { get; set; }
         public virtual ICollection<StockQuote> StockQuotes { get; set; }
         public virtual ICollection<StockIndex> StockIndexes { get; set; }
+        public virtual StockCountry StockCountry { get; set; }
     }
 }

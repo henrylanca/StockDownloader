@@ -8,7 +8,7 @@
         <EntityTypeShape EntityType="StockDataModel.StockInformation" Width="1.5" PointX="3" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="StockDataModel.StockPeak" Width="1.5" PointX="3.375" PointY="6.875" IsExpanded="true" />
         <EntityTypeShape EntityType="StockDataModel.StockPick" Width="1.5" PointX="6" PointY="7" IsExpanded="true" />
-        <EntityTypeShape EntityType="StockDataModel.StockPickType" Width="1.5" PointX="3.75" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="StockDataModel.StockPickType" Width="1.5" PointX="6.875" PointY="10.375" IsExpanded="true" />
         <EntityTypeShape EntityType="StockDataModel.StockQuote" Width="1.5" PointX="3" PointY="12.875" IsExpanded="true" />
         <EntityTypeShape EntityType="StockDataModel.StockSymbol" Width="1.5" PointX="0.5" PointY="6.875" IsExpanded="true" />
         <AssociationConnector Association="StockDataModel.FK_StockInformation_StockSymbol1" ManuallyRouted="false" />
@@ -16,9 +16,11 @@
         <AssociationConnector Association="StockDataModel.FK_StockPick_StockPickType" ManuallyRouted="false" />
         <AssociationConnector Association="StockDataModel.FK_StockPick_StockSymbol" ManuallyRouted="false" />
         <AssociationConnector Association="StockDataModel.FK_StockQuote_StockSymbol" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="StockDataModel.StockIndex" Width="1.5" PointX="1.125" PointY="10.625" />
+        <EntityTypeShape EntityType="StockDataModel.StockIndex" Width="1.5" PointX="3.75" PointY="10.625" />
         <AssociationConnector Association="StockDataModel.StockIndexComponents" />
         <EntityTypeShape EntityType="StockDataModel.StockCountry" Width="1.5" PointX="0.51073942916036552" PointY="11.122084399276453" />
+        <AssociationConnector Association="StockDataModel.FK_StockIndex_StockCountry" />
+        <AssociationConnector Association="StockDataModel.FK_StockSymbol_StockCountry" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
