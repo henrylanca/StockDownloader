@@ -1,18 +1,18 @@
 ﻿<Window x:Class="Downloader.CountryList"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="CountryList" Height="300" Width="300">
+        Title="Country List" Height="280" Width="260" ResizeMode="NoResize">
     <Grid Margin="10" >
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ListBox Name="lstCountry" Grid.Row="0" HorizontalContentAlignment="Stretch">
+        <ListBox Name="lstCountry" Grid.Row="0" HorizontalContentAlignment="Stretch" SelectionChanged="lstCountry_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="30" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{Binding Code}" />
@@ -21,5 +21,30 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        
+        <Grid Grid.Row="1">
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Code" />
+                <TextBox Name="txtCode" Width="150" Grid.Row="0" Grid.Column="1" Margin="2" HorizontalAlignment="Left" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Name" />
+                <TextBox Name="txtName" Width="150" Grid.Row="1" Grid.Column="1" Margin="2" HorizontalAlignment="Left"/>
+                
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                    <Button Name="btnSave" Margin="2" Click="Button_Click">Save</Button>
+                    <Button Name="btnDelete" Margin="2" Click="Button_Click">Delete</Button>
+                    <Button Name="btnClear" Margin="2" Click="Button_Click">Clear</Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

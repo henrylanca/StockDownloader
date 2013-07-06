@@ -25,11 +25,26 @@ namespace StockDownloader.StockDBRepository
             }
         }
 
+        public void DeleteCountry(StockCountry country)
+        {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                StockCountry sCountry = context.StockCountries
+                    .Where(c => (string.Compare(c.Code, country.Code, true) == 0)).SingleOrDefault();
+
+
+                if (sCountry != null)
+                    context.StockCountries.Remove(sCountry);
+
+                context.SaveChanges();
+            }
+        }
+
         public List<StockCountry> GetCountryList()
         {
             using (StockDataEntities context = new StockDataEntities())
             {
-                return context.StockCountries.ToList();
+                return context.StockCountries.OrderBy(c=>c.Code).ToList();
             }
         }
 
