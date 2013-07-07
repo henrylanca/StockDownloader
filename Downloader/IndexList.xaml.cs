@@ -68,6 +68,26 @@ namespace Downloader
                                     CountryCode = (this.cbCountry.SelectedItem as StockCountry).Code
                                 });
 
+                            CleanInput();
+                            LoadIndexes();
+                        }
+                    }
+                    break;
+                case "btnDelete":
+                    if (ValidInput())
+                    {
+                        if (MessageBox.Show("Do you want to Delete Index?", "Delete Index",
+                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            this._repository.DeleteIndex(
+                                new StockIndex()
+                                {
+                                    IndexName = this.txtName.Text,
+                                    Description = this.txtDesc.Text,
+                                    CountryCode = (this.cbCountry.SelectedItem as StockCountry).Code
+                                });
+
+                            CleanInput();
                             LoadIndexes();
                         }
                     }
@@ -102,6 +122,19 @@ namespace Downloader
             else
             {
                 return true;
+            }
+        }
+
+        private void lvIndexes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.lvIndexes.SelectedItem != null)
+            {
+                StockIndex index = this.lvIndexes.SelectedItem as StockIndex;
+
+                this.txtName.Text = index.IndexName;
+                this.txtDesc.Text = index.Description;
+                this.cbCountry.SelectedValue = index.CountryCode;
+                    
             }
         }
     }

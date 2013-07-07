@@ -27,17 +27,24 @@
 
             <TextBox Name="txtName" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" Margin="2" VerticalAlignment="Stretch" />
             <TextBox Name="txtDesc" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Margin="2" VerticalAlignment="Stretch"  />
-            <ComboBox Name="cbCountry" Grid.Column="2" Grid.Row="1" DisplayMemberPath="Code"
+            <ComboBox Name="cbCountry" Grid.Column="2" Grid.Row="1" DisplayMemberPath="Code" SelectedValuePath="Code"
                       HorizontalAlignment="Stretch" Margin="2" VerticalAlignment="Stretch"  />
             
             <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal">
                 <Button Name="btnSave" Margin="2" Width="100" Click="Button_Click">Save</Button>
+                <Button Name="btnDelete" Margin="2" Width="100" Click="Button_Click">Delete</Button>
                 <Button Name="btnClear" Margin="2" Width="100" Click="Button_Click">Clear</Button>
             </StackPanel>
         </Grid>
         
-        <ListView Name="lvIndexes" Grid.Row="1">
-            
+        <ListView Name="lvIndexes" Grid.Row="1" SelectionChanged="lvIndexes_SelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding IndexName}" />
+                    <GridViewColumn Header="Desription" Width="200" DisplayMemberBinding="{Binding Description}" />
+                    <GridViewColumn Header="Country" Width="100" DisplayMemberBinding="{Binding CountryCode}" />
+                </GridView>
+            </ListView.View>
         </ListView>
     </Grid>
 </Window>
