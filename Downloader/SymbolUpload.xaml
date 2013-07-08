@@ -11,7 +11,7 @@
 
         <Button Name="btnUpload" Width="220" Height="30" Click="btnUpload_Click">Upload</Button>
 
-        <TextBox Name="txtSymbol" Grid.Row="1" HorizontalAlignment="Stretch" Margin="2" 
+        <TextBox Name="txtSymbols" Grid.Row="1" HorizontalAlignment="Stretch" Margin="2" 
                  VerticalAlignment="Stretch" AcceptsReturn="True" Grid.ColumnSpan="2" ></TextBox>
     </Grid>
 </Window>

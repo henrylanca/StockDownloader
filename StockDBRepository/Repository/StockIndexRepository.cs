@@ -58,5 +58,28 @@ namespace StockDownloader.StockDBRepository
             }
         }
 
+        public void AddComponentsToIndex(string index, List<StockSymbol> symbols)
+        {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                StockIndex stockIndex = context.StockIndexes
+                    .Where(i => string.Compare(i.IndexName, index, true) == 0).FirstOrDefault();
+
+                if (stockIndex != null)
+                {
+                    foreach(StockSymbol symbol in symbols)
+                    {
+                        if (stockIndex.StockSymbols
+                            .Where(s => string.Compare(s.Symbol, symbol.Symbol, true) == 0).Count() <= 0)
+                        {
+                            stockIndex.StockSymbols.Add(symbol);
+                        }
+                    }
+
+                    context.SaveChanges();
+                }
+            }
+        }
+
     }
 }
