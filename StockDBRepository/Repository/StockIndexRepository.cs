@@ -69,13 +69,18 @@ namespace StockDownloader.StockDBRepository
                 {
                     foreach(StockSymbol symbol in symbols)
                     {
-                        if (stockIndex.StockSymbols
-                            .Where(s => string.Compare(s.Symbol, symbol.Symbol, true) == 0).Count() <= 0)
+                        var existingSymbol = context.StockSymbols
+                            .Where(s => string.Compare(s.Symbol, symbol.Symbol, true)==0).SingleOrDefault();
+                        if (existingSymbol != null)
                         {
-                            stockIndex.StockSymbols.Add(symbol);
+                            stockIndex.StockSymbols.Add(existingSymbol);
+                        }
+                        else
+                        {
+                            throw new ApplicationException(string.Format("Cannot find symbol: {0}", symbol.Symbol));
                         }
                     }
-
+                    
                     context.SaveChanges();
                 }
             }

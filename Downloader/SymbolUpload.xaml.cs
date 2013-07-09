@@ -23,8 +23,14 @@ namespace Downloader
     {
         class IndexComponents
         {
+
             public string Index { get; set; }
             public List<StockSymbol> Symbols { get; set; }
+
+            public IndexComponents()
+            {
+                this.Symbols = new List<StockSymbol>();
+            }
         }
 
         private StockSymbolRepository _stockSymbolRepository = new StockSymbolRepository();
@@ -49,6 +55,9 @@ namespace Downloader
 
             List<IndexComponents> indexComponentList = new List<IndexComponents>();
 
+            StockCountryRepository countryRepository = new StockCountryRepository();
+            List<StockCountry> allCountries = countryRepository.GetCountryList();
+
             #region Parse all lines
             foreach (string line in lines)
             {
@@ -71,6 +80,13 @@ namespace Downloader
                     symbol.StockName = items[2];
                     symbol.Sector = items[3];
                     symbol.Country = items[4];
+                    if ((allCountries.Where(c => string.Compare(c.Code, symbol.Country, true) <= 0).
+                        Count()) <= 0)
+                    {
+                        MessageBox.Show(string.Format("Invalid Country Code : {0}", line), "Invalid Country Code",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
 
                     int.TryParse(items[5],out etf);
                     symbol.ETF = etf;
@@ -95,7 +111,25 @@ namespace Downloader
 
             foreach (IndexComponents indexCom in indexComponentList)
             {
+                if (string.Compare(indexCom.Index, "NULL", true) != 0)
+                {
+                    StockIndex index = this._stockIndexReposotory.GetAllIndexes()
+                        .Where(i => string.Compare(i.IndexName, indexCom.Index, true) == 0).SingleOrDefault();
+
+                    if (index == null)
+                    {
+                        MessageBox.Show(string.Format("Invalid index name: {0}", indexCom.Index), "Invalid Index",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    this._stockSymbolRepository.UpdateSymbols(indexCom.Symbols);
+                    this._stockIndexReposotory.AddComponentsToIndex(indexCom.Index, indexCom.Symbols);
+                }
             }
+
+            MessageBox.Show("Uploading complete successfully", "Upload Confirmation",
+                MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 
