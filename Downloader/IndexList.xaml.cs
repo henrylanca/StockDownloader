@@ -24,6 +24,7 @@ namespace Downloader
         private ObservableCollection<StockIndex> _stockIndexs = new ObservableCollection<StockIndex>();
         private StockIndexRepository _repository = new StockIndexRepository();
         private StockCountryRepository _countryRepository = new StockCountryRepository();
+        private StockSymbolRepository _symbolRepository = new StockSymbolRepository();
 
         public IndexList()
         {
@@ -134,6 +135,8 @@ namespace Downloader
                 this.txtName.Text = index.IndexName;
                 this.txtDesc.Text = index.Description;
                 this.cbCountry.SelectedValue = index.CountryCode;
+
+                this.lvComponents.ItemsSource = this._symbolRepository.GetIndexComponents(index.IndexName);
                     
             }
         }

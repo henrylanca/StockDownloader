@@ -37,6 +37,22 @@ namespace StockDownloader.StockDBRepository
             }
         }
 
+        public List<StockSymbol> GetIndexComponents(string indexName)
+        {
+            List<StockSymbol> symbols = new List<StockSymbol>();
+
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                StockIndex index = context.StockIndexes
+                    .Where(i => string.Compare(i.IndexName, indexName, true) == 0).SingleOrDefault();
+
+                if (index != null)
+                    symbols = index.StockSymbols.ToList();
+            }
+
+            return symbols;
+        }
+
 
     }
 }
