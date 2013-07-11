@@ -86,5 +86,31 @@ namespace StockDownloader.StockDBRepository
             }
         }
 
+        public void RemoveComponentfromIndex(string index, StockSymbol symbol)
+        {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                StockIndex stockIndex = context.StockIndexes
+                    .Where(i => string.Compare(i.IndexName, index, true) == 0).FirstOrDefault();
+
+                if (stockIndex != null)
+                {
+
+                    var existingSymbol = context.StockSymbols
+                        .Where(s => string.Compare(s.Symbol, symbol.Symbol, true) == 0).SingleOrDefault();
+                    if (existingSymbol != null)
+                    {
+                        stockIndex.StockSymbols.Remove(existingSymbol);
+                    }
+                    else
+                    {
+                        throw new ApplicationException(string.Format("Cannot find symbol: {0}", symbol.Symbol));
+                    }
+
+                    context.SaveChanges();
+                }
+            }
+        }
+
     }
 }

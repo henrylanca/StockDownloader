@@ -26,6 +26,8 @@ namespace Downloader
         private StockCountryRepository _countryRepository = new StockCountryRepository();
         private StockSymbolRepository _symbolRepository = new StockSymbolRepository();
 
+        private StockIndex _selectedIndex = null;
+
         public IndexList()
         {
             InitializeComponent();
@@ -101,6 +103,19 @@ namespace Downloader
             }
         }
 
+        private void lvButton_Click(object sender, RoutedEventArgs e)
+        {
+            StockSymbol symbol = ((ListViewItem)this.lvComponents.ContainerFromElement((Button)sender)).Content as StockSymbol;
+
+            if (MessageBox.Show(string.Format("Do you want to delete {0} from index?", symbol.Symbol), "Remove Symbol conformation",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                this._repository.RemoveComponentfromIndex(this._selectedIndex.IndexName, symbol);
+                this.lvComponents.ItemsSource = this._symbolRepository.GetIndexComponents(this._selectedIndex.IndexName);
+            }
+
+        }
+
         private void CleanInput()
         {
             this.txtName.Text = "";
@@ -131,6 +146,7 @@ namespace Downloader
             if (this.lvIndexes.SelectedItem != null)
             {
                 StockIndex index = this.lvIndexes.SelectedItem as StockIndex;
+                this._selectedIndex = index;
 
                 this.txtName.Text = index.IndexName;
                 this.txtDesc.Text = index.Description;
