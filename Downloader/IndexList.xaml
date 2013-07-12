@@ -37,6 +37,7 @@
             </StackPanel>
         </Grid>
         
+        
         <ListView Name="lvIndexes" Grid.Row="1" SelectionChanged="lvIndexes_SelectionChanged">
             <ListView.View>
                 <GridView>
@@ -47,8 +48,15 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        
-        <ListView Name="lvComponents" Grid.Row="2">
+
+        <Grid Grid.Row="2" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <TextBlock Name="tbComponents" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" ></TextBlock>
+            <ListView Name="lvComponents" Grid.Row="1" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Symbol" Width="80" DisplayMemberBinding="{Binding Symbol}" />
@@ -64,6 +72,7 @@
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
-        </ListView>
+            </ListView>
+        </Grid>
     </Grid>
 </Window>

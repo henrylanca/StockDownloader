@@ -153,7 +153,10 @@ namespace Downloader
                 this.cbCountry.SelectedValue = index.CountryCode;
 
                 this.lvComponents.ItemsSource = this._symbolRepository.GetIndexComponents(index.IndexName);
-                    
+                if (this.lvComponents.Items.Count > 0)
+                    this.tbComponents.Text = string.Format("Total {0} components", this.lvComponents.Items.Count);
+                else
+                    this.tbComponents.Text = "";
             }
         }
     }
