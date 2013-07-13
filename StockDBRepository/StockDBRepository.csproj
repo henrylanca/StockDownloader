@@ -49,6 +49,7 @@
     <Compile Include="Repository\StockCountryRepository.cs" />
     <Compile Include="Repository\StockIndexRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\StockQuoteRepository.cs" />
     <Compile Include="Repository\StockSymbolRepository.cs" />
     <Compile Include="StockCountry.cs">
       <DependentUpon>StockData.tt</DependentUpon>
