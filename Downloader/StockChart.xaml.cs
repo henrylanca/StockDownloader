@@ -29,8 +29,9 @@ namespace Downloader
 
         private void btnDraeChart_Click(object sender, RoutedEventArgs e)
         {
-
             StockChartUI stockChartUI = new StockChartUI(this.cvChart, "IBM", 1,this.ActualWidth);
+
+            stockChartUI.DrawChart(DateTime.Now);
         }
     }
 }

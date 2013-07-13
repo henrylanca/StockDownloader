@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using StockDownloader.StockDBRepository;
 
 namespace Downloader
@@ -54,25 +55,52 @@ namespace Downloader
                 this._startDate = this._endDate.AddYears(-5);
 
             this._chartQuote = this._stockQuotes.Where(q => (q.QuoteDate >= this._startDate &&
-                q.QuoteDate <= this._endDate)).OrderByDescending(q => q.QuoteDate).ToList();
-
+                q.QuoteDate <= this._endDate)).OrderBy(q => q.QuoteDate).ToList();
 
             if (this._chartQuote.Count > 0)
             {
-                this._candleWidth = (int)(this._chart.Width / this._chartQuote.Count) - 2;
+                //this._candleWidth = (int)(this._chart.Width / this._chartQuote.Count) - 2;
 
-                if (this._candleWidth <= 0)
-                    this._candleWidth = 1;
+                //if (this._candleWidth <= 0)
+                //    this._candleWidth = 1;
 
-                this._rangeHigh = this._chartQuote.OrderByDescending(q => q.HighValue).FirstOrDefault().HighValue * 1.1m;
-                this._rangeLow = this._chartQuote.OrderBy(q => q.HighValue).FirstOrDefault().LowValue * 0.9m ;
+                this._rangeHigh = this._chartQuote.OrderByDescending(q => q.HighValue).FirstOrDefault().HighValue ;
+                this._rangeLow = this._chartQuote.OrderBy(q => q.HighValue).FirstOrDefault().LowValue ;
+
+                decimal margin = (this._rangeHigh - this._rangeLow) / 20;
+                this._rangeHigh += margin;
+                this._rangeLow -= margin;
+
+
+                int iPos = 1;
+                foreach (StockQuote quote in this._chartQuote)
+                {
+                    Point OpenPoint = MapQuoteToChart(iPos, quote.OpenValue);
+                    Point closePoint = MapQuoteToChart(iPos, quote.CloseValue);
+                    OpenPoint.X--;
+                    closePoint.X++;
+
+                    Rectangle rec = new Rectangle();
+                    rec.Width = Math.Abs(OpenPoint.X - closePoint.X)+1;
+                    rec.Height = Math.Abs(OpenPoint.Y - closePoint.Y);
+                    Canvas.SetLeft(rec, Math.Min(OpenPoint.X, closePoint.X));
+                    Canvas.SetTop(rec, Math.Min(OpenPoint.Y, closePoint.Y));
+                    rec.Stroke = new SolidColorBrush(Colors.Blue);
+
+                    this._chart.Children.Add(rec);
+
+                    iPos++;
+
+                }
             }
+
+
         }
 
-        private Point MapPriceToChart(int x, decimal price)
+        private Point MapQuoteToChart(int x, decimal price)
         {
             Point cPoint = new Point();
-            cPoint.X = x / this._chartQuote.Count * this._chart.Width;
+            cPoint.X = x * this._chart.Width / this._chartQuote.Count;
             cPoint.Y = this._chart.Height - 
                 (double)((price - this._rangeLow) / (this._rangeHigh - this._rangeLow)) * this._chart.Height;
             return cPoint;
