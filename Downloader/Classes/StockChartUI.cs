@@ -18,7 +18,6 @@ namespace Downloader
         private short _timeFrame;
         private DateTime _startDate;
         private DateTime _endDate;
-        private int _candleWidth;
 
         private decimal _rangeHigh;
         private decimal _rangeLow;
@@ -85,7 +84,10 @@ namespace Downloader
                     rec.Height = Math.Abs(OpenPoint.Y - closePoint.Y);
                     Canvas.SetLeft(rec, Math.Min(OpenPoint.X, closePoint.X));
                     Canvas.SetTop(rec, Math.Min(OpenPoint.Y, closePoint.Y));
-                    rec.Stroke = new SolidColorBrush(Colors.Blue);
+                    if(quote.CloseValue>= quote.OpenValue)
+                        rec.Fill = new SolidColorBrush(Colors.Green);
+                    else
+                        rec.Fill = new SolidColorBrush(Colors.Red);
 
                     this._chart.Children.Add(rec);
 
@@ -100,7 +102,7 @@ namespace Downloader
         private Point MapQuoteToChart(int x, decimal price)
         {
             Point cPoint = new Point();
-            cPoint.X = x * this._chart.Width / this._chartQuote.Count;
+            cPoint.X = x * (this._chart.Width-10) / this._chartQuote.Count;
             cPoint.Y = this._chart.Height - 
                 (double)((price - this._rangeLow) / (this._rangeHigh - this._rangeLow)) * this._chart.Height;
             return cPoint;
