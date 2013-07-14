@@ -70,10 +70,34 @@ namespace Downloader
                 this._rangeHigh += margin;
                 this._rangeLow -= margin;
 
-
+                DateTime dtLine = DateTime.MinValue;
+                
                 int iPos = 1;
                 foreach (StockQuote quote in this._chartQuote)
                 {
+
+                    if (this._timeFrame == 1)
+                    {
+
+                        if (quote.QuoteDate.Month != dtLine.Month)
+                        {
+                            Point lineLow = MapQuoteToChart(iPos, this._rangeLow);
+                            Point lineHigh = MapQuoteToChart(iPos, this._rangeHigh);
+
+                            Line dateLine = new Line();
+                            dateLine.Stroke = new SolidColorBrush(Colors.White);
+                            dateLine.StrokeThickness = 1;
+                            dateLine.X1 = lineLow.X;
+                            dateLine.X2 = lineHigh.X;
+                            dateLine.Y1 = lineLow.Y;
+                            dateLine.Y2 = lineHigh.Y;
+                            this._chart.Children.Add(dateLine);
+
+                            dtLine = quote.QuoteDate;
+                        }
+                    }
+
+
                     Point OpenPoint = MapQuoteToChart(iPos, quote.OpenValue);
                     Point closePoint = MapQuoteToChart(iPos, quote.CloseValue);
                     OpenPoint.X--;
@@ -88,8 +112,19 @@ namespace Downloader
                         rec.Fill = new SolidColorBrush(Colors.Green);
                     else
                         rec.Fill = new SolidColorBrush(Colors.Red);
-
                     this._chart.Children.Add(rec);
+
+                    Point highPoint = MapQuoteToChart(iPos, quote.HighValue);
+                    Point lowPoint = MapQuoteToChart(iPos, quote.LowValue);
+
+                    Line ln = new Line();
+                    ln.Stroke = rec.Fill;
+                    ln.X1 = highPoint.X;
+                    ln.X2 = lowPoint.X;
+                    ln.Y1 = highPoint.Y;
+                    ln.Y2 = lowPoint.Y;
+                    this._chart.Children.Add(ln);
+
 
                     iPos++;
 
