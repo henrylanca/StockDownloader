@@ -29,7 +29,7 @@ namespace Downloader
 
         private void btnDraeChart_Click(object sender, RoutedEventArgs e)
         {
-            StockChartUI stockChartUI = new StockChartUI(this.cvChart, "G.TO", 1,this.ActualWidth);
+            StockChartUI stockChartUI = new StockChartUI(this.cvChart, "G.TO", 2,this.ActualWidth);
 
             stockChartUI.DrawChart(DateTime.Now);
         }

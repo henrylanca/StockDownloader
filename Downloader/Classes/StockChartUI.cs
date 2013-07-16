@@ -58,11 +58,6 @@ namespace Downloader
 
             if (this._chartQuote.Count > 0)
             {
-                //this._candleWidth = (int)(this._chart.Width / this._chartQuote.Count) - 2;
-
-                //if (this._candleWidth <= 0)
-                //    this._candleWidth = 1;
-
                 this._rangeHigh = this._chartQuote.OrderByDescending(q => q.HighValue).FirstOrDefault().HighValue ;
                 this._rangeLow = this._chartQuote.OrderBy(q => q.HighValue).FirstOrDefault().LowValue ;
 
@@ -70,31 +65,76 @@ namespace Downloader
                 this._rangeHigh += margin;
                 this._rangeLow -= margin;
 
+                decimal priceGap = (this._rangeHigh - this._rangeLow) / 10;
+                decimal startPrice = this._rangeLow;
+                int xCount = this._chartQuote.Count;
+                while (startPrice <= this._rangeHigh)
+                {
+                    Point lineLeft = MapQuoteToChart(1, startPrice);
+                    Point lineRight = MapQuoteToChart(xCount, startPrice);
+
+                    Line priceLine = new Line();
+                    priceLine.Stroke = new SolidColorBrush(Colors.White);
+                    priceLine.StrokeThickness = 1;
+                    priceLine.X1 = lineLeft.X;
+                    priceLine.X2 = lineRight.X;
+                    priceLine.Y1 = lineLeft.Y;
+                    priceLine.Y2 = lineRight.Y;
+                    this._chart.Children.Add(priceLine);
+
+                    TextBlock txtPrice = new TextBlock();
+                    txtPrice.Text = string.Format("{0:C}", startPrice);
+                    txtPrice.FontSize = 10;                   
+                    txtPrice.TextAlignment = TextAlignment.Center;
+                    txtPrice.Foreground = new SolidColorBrush(Colors.White);
+                    Canvas.SetLeft(txtPrice, lineLeft.X+10);
+                    Canvas.SetTop(txtPrice, lineLeft.Y-10);
+                    this._chart.Children.Add(txtPrice);
+
+                    startPrice += priceGap;
+                }
+
                 DateTime dtLine = DateTime.MinValue;
                 
                 int iPos = 1;
                 foreach (StockQuote quote in this._chartQuote)
                 {
+                    bool drawLineFlag = false;
 
                     if (this._timeFrame == 1)
                     {
-
                         if (quote.QuoteDate.Month != dtLine.Month)
-                        {
-                            Point lineLow = MapQuoteToChart(iPos, this._rangeLow);
-                            Point lineHigh = MapQuoteToChart(iPos, this._rangeHigh);
+                            drawLineFlag = true;
+                    }
+                    else if (this._timeFrame == 2)
+                    {
+                        if (GetQuarter(quote.QuoteDate) != GetQuarter(dtLine))
+                            drawLineFlag = true;
+                    }
 
-                            Line dateLine = new Line();
-                            dateLine.Stroke = new SolidColorBrush(Colors.White);
-                            dateLine.StrokeThickness = 1;
-                            dateLine.X1 = lineLow.X;
-                            dateLine.X2 = lineHigh.X;
-                            dateLine.Y1 = lineLow.Y;
-                            dateLine.Y2 = lineHigh.Y;
-                            this._chart.Children.Add(dateLine);
+                    if (drawLineFlag)
+                    {
+                        Point lineLow = MapQuoteToChart(iPos, this._rangeLow);
+                        Point lineHigh = MapQuoteToChart(iPos, this._rangeHigh);
 
-                            dtLine = quote.QuoteDate;
-                        }
+                        Line dateLine = new Line();
+                        dateLine.Stroke = new SolidColorBrush(Colors.White);
+                        dateLine.StrokeThickness = 1;
+                        dateLine.X1 = lineLow.X;
+                        dateLine.X2 = lineHigh.X;
+                        dateLine.Y1 = lineLow.Y;
+                        dateLine.Y2 = lineHigh.Y;
+                        this._chart.Children.Add(dateLine);
+
+                        dtLine = quote.QuoteDate;
+
+                        TextBlock txtDt = new TextBlock();
+                        txtDt.Text = string.Format("{0:yy-MM-dd}", quote.QuoteDate);
+                        txtDt.FontSize = 10;
+                        txtDt.TextAlignment = TextAlignment.Center;
+                        Canvas.SetLeft(txtDt, lineLow.X);
+                        Canvas.SetTop(txtDt, lineLow.Y);
+                        this._chart.Children.Add(txtDt);
                     }
 
 
@@ -141,6 +181,11 @@ namespace Downloader
             cPoint.Y = this._chart.Height - 
                 (double)((price - this._rangeLow) / (this._rangeHigh - this._rangeLow)) * this._chart.Height;
             return cPoint;
+        }
+
+        private int GetQuarter(DateTime quoteDate)
+        {
+            return (quoteDate.Month - 1) / 3 + 1;
         }
        
     }
