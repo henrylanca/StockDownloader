@@ -23,10 +23,10 @@
             <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
                 <TextBlock Name="txtFullInfo" VerticalAlignment="Bottom" Width="400" Margin="2" />
 
-                <RadioButton Name="rbDay" GroupName="TimeFrame" Margin="2" IsChecked="True">Day</RadioButton>
-                <RadioButton Name="rbWeek" GroupName="TimeFrame" Margin="2">Week</RadioButton>
+                <RadioButton Name="rbDay" GroupName="TimeFrame" Margin="2" IsChecked="True" Checked="rbTimeFrame_Checked" >Day</RadioButton>
+                <RadioButton Name="rbWeek" GroupName="TimeFrame" Margin="2" Checked="rbTimeFrame_Checked">Week</RadioButton>
 
-                <Button Name="btnDraeChart" Click="btnDrawChart_Click" Height="25" Width="80" Margin="2" >Draw Chart</Button>
+                
             </StackPanel>
         </Grid>
 

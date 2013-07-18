@@ -29,19 +29,21 @@ namespace Downloader
         }
 
 
-        private void btnDrawChart_Click(object sender, RoutedEventArgs e)
-        {
-            //StockChartUI stockChartUI = new StockChartUI(this.cvChart, "G.TO", 2,this.ActualWidth);
+        //private void btnDrawChart_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //StockChartUI stockChartUI = new StockChartUI(this.cvChart, "G.TO", 2,this.ActualWidth);
 
-            //stockChartUI.DrawChart(DateTime.Now);
+        //    //stockChartUI.DrawChart(DateTime.Now);
 
-            short timeFrame = 1;
+        //    short timeFrame = 1;
 
-            if (this.rbWeek.IsChecked==true)
-                timeFrame = 2;
+        //    if (this.rbWeek.IsChecked==true)
+        //        timeFrame = 2;
 
-            this.DrawChart(this.txtSymbol.Text, timeFrame);
-        }
+        //    this.DrawChart(this.txtSymbol.Text, timeFrame);
+        //}
+
+
 
         private void btnGetSymbolinfo_Click(object sender, RoutedEventArgs e)
         {
@@ -67,6 +69,25 @@ namespace Downloader
 
                 stockChartUI.DrawChart(DateTime.Now);
             }
+        }
+
+        private void rbTimeFrame_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton rb = sender as RadioButton;
+            short timeFrame = 1;
+
+            switch (rb.Name)
+            {
+                case "rbWeek":
+                    timeFrame=2;
+                    break;
+                default:
+                    timeFrame = 1;
+                    break;
+            }
+
+            if(!string.IsNullOrEmpty(this.txtSymbol.Text))
+                this.DrawChart(this.txtSymbol.Text, timeFrame);
         }
     }
 }
