@@ -53,6 +53,15 @@ namespace StockDownloader.StockDBRepository
             return symbols;
         }
 
+        public StockSymbol GetSymbol(string symbol)
+        {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                StockSymbol stockSymbol = context.StockSymbols
+                    .Where(s => string.Compare(s.Symbol, symbol, true) == 0).SingleOrDefault();
 
+                return stockSymbol;
+            }
+        }
     }
 }

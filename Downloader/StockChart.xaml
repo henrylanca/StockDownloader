@@ -4,13 +4,32 @@
         Title="StockChart" Height="300" Width="300" WindowState="Maximized" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="80" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <StackPanel Grid.Row="0" Margin="5" Orientation="Horizontal">
-            <Button Name="btnDraeChart" Click="btnDraeChart_Click" Height="30" Width="80">Draw Chart</Button>
-        </StackPanel>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" >                
+                <TextBlock Text="Symbol:" VerticalAlignment="Bottom" Margin="2" />
+                <TextBox Name="txtSymbol" Width="100" Height="25" VerticalAlignment="Bottom" Margin="2"></TextBox>
+                <Button Name="btnGetSymbolinfo" Margin="2" Height="25" VerticalAlignment="Bottom" Click="btnGetSymbolinfo_Click">Load Stock Information</Button>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                <TextBlock Name="txtFullInfo" VerticalAlignment="Bottom" Width="400" Margin="2" />
+
+                <RadioButton Name="rbDay" GroupName="TimeFrame" Margin="2" IsChecked="True">Day</RadioButton>
+                <RadioButton Name="rbWeek" GroupName="TimeFrame" Margin="2">Week</RadioButton>
+
+                <Button Name="btnDraeChart" Click="btnDrawChart_Click" Height="25" Width="80" Margin="2" >Draw Chart</Button>
+            </StackPanel>
+        </Grid>
+
         
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="5">
             <Canvas Name="cvChart" Width="1800" Height="500" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black">
