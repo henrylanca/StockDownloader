@@ -23,40 +23,35 @@ namespace Downloader
     {
         private StockSymbolRepository _symbolRepository = new StockSymbolRepository();
 
+        private StockSymbol _stockSymbol = null;
+
         public StockChart()
         {
             InitializeComponent();
+
+            this.DataContext = this._stockSymbol;
         }
-
-
-        //private void btnDrawChart_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //StockChartUI stockChartUI = new StockChartUI(this.cvChart, "G.TO", 2,this.ActualWidth);
-
-        //    //stockChartUI.DrawChart(DateTime.Now);
-
-        //    short timeFrame = 1;
-
-        //    if (this.rbWeek.IsChecked==true)
-        //        timeFrame = 2;
-
-        //    this.DrawChart(this.txtSymbol.Text, timeFrame);
-        //}
-
 
 
         private void btnGetSymbolinfo_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(this.txtSymbol.Text))
             {
-                StockSymbol stockSymbol = this._symbolRepository.GetSymbol(this.txtSymbol.Text);
+                this._stockSymbol = this._symbolRepository.GetSymbol(this.txtSymbol.Text);
 
-                if (stockSymbol != null)
+                if (this._stockSymbol != null)
                 {
                     this.txtFullInfo.Text = string.Format("{0} - {1} ({2:yyyy-MM-dd} - {3:yyyy-MM-dd})",
-                        stockSymbol.StockName, stockSymbol.Sector, stockSymbol.StartDate,
-                        stockSymbol.EndDate);
-                    DrawChart(stockSymbol.Symbol, 1);
+                        this._stockSymbol.StockName, this._stockSymbol.Sector, this._stockSymbol.StartDate,
+                        this._stockSymbol.EndDate);
+
+                    this.rbDay.IsChecked = true;
+
+                    DrawChart(this._stockSymbol.Symbol, 1);
+                }
+                else
+                {
+                    MessageBox.Show(string.Format("Cannot find infromation for {0}", this.txtSymbol.Text));
                 }
             }
         }

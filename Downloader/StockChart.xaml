@@ -18,13 +18,14 @@
                 <TextBlock Text="Symbol:" VerticalAlignment="Bottom" Margin="2" />
                 <TextBox Name="txtSymbol" Width="100" Height="25" VerticalAlignment="Bottom" Margin="2"></TextBox>
                 <Button Name="btnGetSymbolinfo" Margin="2" Height="25" VerticalAlignment="Bottom" Click="btnGetSymbolinfo_Click">Load Stock Information</Button>
+                <RadioButton Name="rbDay" GroupName="TimeFrame" Margin="2" VerticalAlignment="Bottom" IsChecked="True" Checked="rbTimeFrame_Checked" >Day</RadioButton>
+                <RadioButton Name="rbWeek" GroupName="TimeFrame" Margin="2" VerticalAlignment="Bottom" Checked="rbTimeFrame_Checked">Week</RadioButton>
+
             </StackPanel>
             
             <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
                 <TextBlock Name="txtFullInfo" VerticalAlignment="Bottom" Width="400" Margin="2" />
 
-                <RadioButton Name="rbDay" GroupName="TimeFrame" Margin="2" IsChecked="True" Checked="rbTimeFrame_Checked" >Day</RadioButton>
-                <RadioButton Name="rbWeek" GroupName="TimeFrame" Margin="2" Checked="rbTimeFrame_Checked">Week</RadioButton>
 
                 
             </StackPanel>
