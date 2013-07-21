@@ -57,12 +57,11 @@ namespace PeakCalculater
 
                     if (fallWeeks >= 4)
                     {
-                        prevQuote = quote;
                         pastWeeks = 0;
                         startChecking = true;
                     }
 
-                    if (pastWeeks <= 4 && startChecking)
+                    if (pastWeeks <= 8 && startChecking)
                     {
                         pastWeeks++;
                     }
@@ -92,11 +91,19 @@ namespace PeakCalculater
                                 startChecking = false;
                             }
                         }
-
-                        prevQuote = quote;
+                        else
+                            prevQuote = quote;
                     }
                 }
             }
         }
+
+        //public void Test(string symbol, string conn)
+        //{
+        //    string strSymbol = symbol;
+        //    string strConn = conn;
+
+
+        //}
     }
 }

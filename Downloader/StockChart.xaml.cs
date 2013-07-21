@@ -92,6 +92,13 @@ namespace Downloader
         {
             if (this._stockSymbol != null)
             {
+                //FallEnough fallEnoughCal = new FallEnough();
+
+                //fallEnoughCal.Test("MSFT",
+                //    System.Configuration.ConfigurationManager.ConnectionStrings["StockDataDB"].ToString());
+
+                //return;
+
                 if (MessageBox.Show(string.Format("Do you want to re-download {0}?",
                     this._stockSymbol.Symbol), "Download Confirmation", MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes)
