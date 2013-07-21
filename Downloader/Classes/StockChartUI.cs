@@ -24,9 +24,23 @@ namespace Downloader
 
 
         private List<StockQuote> _stockQuotes;
+        private List<StockQuote> _stockWeekQuotes;
         private StockQuoteRepository _quoteRepository;
 
         private List<StockQuote> _chartQuote;
+
+        public short TimeFrame
+        {
+            get
+            {
+                return this._timeFrame;
+            }
+
+            set
+            {
+                this._timeFrame = value;
+            }
+        }
 
         public StockChartUI(Canvas chart, string symbol, short timeFrame, double windowsWidth)
         {            
@@ -37,8 +51,9 @@ namespace Downloader
             this._chart.Width = windowsWidth - 30;
 
             this._quoteRepository = new StockQuoteRepository();
-            this._stockQuotes = this._quoteRepository.GetQuotes(this._symbol,
-                this._timeFrame)
+            this._stockQuotes = this._quoteRepository.GetQuotes(this._symbol,1)
+                .OrderByDescending(q => q.QuoteDate).ToList();
+            this._stockWeekQuotes = this._quoteRepository.GetQuotes(this._symbol,2)
                 .OrderByDescending(q => q.QuoteDate).ToList();
 
         }
@@ -49,12 +64,21 @@ namespace Downloader
 
             this._endDate = endDate;
             if (this._timeFrame == 1)
+            {
                 this._startDate = this._endDate.AddYears(-1);
-            else
-                this._startDate = this._endDate.AddYears(-5);
 
-            this._chartQuote = this._stockQuotes.Where(q => (q.QuoteDate >= this._startDate &&
-                q.QuoteDate <= this._endDate)).OrderBy(q => q.QuoteDate).ToList();
+                this._chartQuote = this._stockQuotes.Where(q => (q.QuoteDate >= this._startDate &&
+                    q.QuoteDate <= this._endDate)).OrderBy(q => q.QuoteDate).ToList();
+            }
+            else
+            {
+                this._startDate = this._endDate.AddYears(-3);
+                this._chartQuote = this._stockWeekQuotes.Where(q => (q.QuoteDate >= this._startDate &&
+                    q.QuoteDate <= this._endDate)).OrderBy(q => q.QuoteDate).ToList();
+            }
+
+            
+
 
             if (this._chartQuote.Count > 0)
             {

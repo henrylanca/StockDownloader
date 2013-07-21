@@ -24,8 +24,9 @@ namespace Downloader
     public partial class StockChart : Window
     {
         private StockSymbolRepository _symbolRepository = new StockSymbolRepository();
-
         private StockSymbol _stockSymbol = null;
+
+        StockChartUI _stockChartUI = null;
 
         public StockChart()
         {
@@ -48,8 +49,9 @@ namespace Downloader
                         this._stockSymbol.EndDate);
 
                     this.rbDay.IsChecked = true;
+                    this._stockChartUI = new StockChartUI(this.cvChart, this._stockSymbol.Symbol, 1, this.ActualWidth);
 
-                    DrawChart( 1);
+                    DrawChart(1);
                 }
                 else
                 {
@@ -64,9 +66,10 @@ namespace Downloader
         {
             if(this._stockSymbol!=null)
             {
-                StockChartUI stockChartUI = new StockChartUI(this.cvChart, this._stockSymbol.Symbol, timeFrame, this.ActualWidth);
+                //StockChartUI stockChartUI = new StockChartUI(this.cvChart, this._stockSymbol.Symbol, timeFrame, this.ActualWidth);
 
-                stockChartUI.DrawChart(DateTime.Now);
+                this._stockChartUI.TimeFrame = timeFrame;
+                this._stockChartUI.DrawChart(DateTime.Now);
             }
         }
 
@@ -92,13 +95,6 @@ namespace Downloader
         {
             if (this._stockSymbol != null)
             {
-                //FallEnough fallEnoughCal = new FallEnough();
-
-                //fallEnoughCal.Test("MSFT",
-                //    System.Configuration.ConfigurationManager.ConnectionStrings["StockDataDB"].ToString());
-
-                //return;
-
                 if (MessageBox.Show(string.Format("Do you want to re-download {0}?",
                     this._stockSymbol.Symbol), "Download Confirmation", MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -152,6 +148,18 @@ namespace Downloader
             else
             {
                 this.pnlStockInfo.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void btnMoveChart_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
+
+            if (string.Compare(btn.Name, "btnPrev", true) == 0)
+            {
+            }
+            else if (string.Compare(btn.Name, "btnNext", true) == 0)
+            {
             }
         }
     }

@@ -25,7 +25,9 @@
             
             <StackPanel Name="pnlStockInfo" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
                 <TextBlock Name="txtFullInfo" VerticalAlignment="Bottom" Width="600" Margin="2" />
-                <Button Name="btnDownload" Margin="2" VerticalAlignment="Bottom" Click="btnDownload_Click">Full Download</Button>              
+                <Button Name="btnPrev" VerticalAlignment="Bottom" Margin="2" Click="btnMoveChart_Click">Prev</Button>
+                <Button Name="btnNext" VerticalAlignment="Bottom" Margin="2" Click="btnMoveChart_Click">Next</Button>
+                <Button Name="btnDownload" Margin="50,2,2,2" VerticalAlignment="Bottom" Click="btnDownload_Click">Full Download</Button>              
             </StackPanel>
         </Grid>
 
