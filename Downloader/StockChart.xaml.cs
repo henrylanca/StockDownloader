@@ -27,6 +27,7 @@ namespace Downloader
         private StockSymbol _stockSymbol = null;
 
         StockChartUI _stockChartUI = null;
+        DateTime _chartDate = DateTime.Today;
 
         public StockChart()
         {
@@ -69,7 +70,7 @@ namespace Downloader
                 //StockChartUI stockChartUI = new StockChartUI(this.cvChart, this._stockSymbol.Symbol, timeFrame, this.ActualWidth);
 
                 this._stockChartUI.TimeFrame = timeFrame;
-                this._stockChartUI.DrawChart(DateTime.Now);
+                this._stockChartUI.DrawChart(this._chartDate);
             }
         }
 
@@ -157,10 +158,24 @@ namespace Downloader
 
             if (string.Compare(btn.Name, "btnPrev", true) == 0)
             {
+                if (this.rbDay.IsChecked == true)
+                    this._chartDate = this._chartDate.AddMonths(-1);
+                else
+                    this._chartDate = this._chartDate.AddMonths(-3);
+
             }
             else if (string.Compare(btn.Name, "btnNext", true) == 0)
             {
+                if (this.rbDay.IsChecked == true)
+                    this._chartDate = this._chartDate.AddMonths(1);
+                else
+                    this._chartDate = this._chartDate.AddMonths(3);
+
+                if (this._chartDate > DateTime.Today)
+                    this._chartDate = DateTime.Today;
             }
+
+            this._stockChartUI.DrawChart(this._chartDate);
         }
     }
 }
