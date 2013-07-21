@@ -31,7 +31,7 @@ namespace Downloader
         {
             InitializeComponent();
 
-            this.DataContext = this._stockSymbol;
+            EnableControls();
         }
 
 
@@ -49,20 +49,22 @@ namespace Downloader
 
                     this.rbDay.IsChecked = true;
 
-                    DrawChart(this._stockSymbol.Symbol, 1);
+                    DrawChart( 1);
                 }
                 else
                 {
                     MessageBox.Show(string.Format("Cannot find infromation for {0}", this.txtSymbol.Text));
                 }
             }
+
+            EnableControls();
         }
 
-        private void DrawChart(string symbol, short timeFrame)
+        private void DrawChart(short timeFrame)
         {
-            if(!string.IsNullOrEmpty(symbol))
+            if(this._stockSymbol!=null)
             {
-                StockChartUI stockChartUI = new StockChartUI(this.cvChart, symbol, timeFrame, this.ActualWidth);
+                StockChartUI stockChartUI = new StockChartUI(this.cvChart, this._stockSymbol.Symbol, timeFrame, this.ActualWidth);
 
                 stockChartUI.DrawChart(DateTime.Now);
             }
@@ -83,31 +85,57 @@ namespace Downloader
                     break;
             }
 
-            if(!string.IsNullOrEmpty(this.txtSymbol.Text))
-                this.DrawChart(this.txtSymbol.Text, timeFrame);
+            this.DrawChart(timeFrame);
         }
 
         private void btnDownload_Click(object sender, RoutedEventArgs e)
         {
-            string s = this.txtSymbol.Text;
-            string strConn = System.Configuration.ConfigurationManager.ConnectionStrings["StockDataDB"].ToString();
-            var exceptions = new Queue<Exception>();
-
-            try
+            if (this._stockSymbol != null)
             {
-                WorkflowInvoker.Invoke(
-                    new PeakCalculater.QuoteDownload()
-                    {
-                        Symbol = s,
-                        ConnString = strConn
-                    }
-                    );
+                StockQuoteRepository quoterepository = new StockQuoteRepository();
+                quoterepository.DeleteAllQuotes(this._stockSymbol.Symbol);
 
+                this._stockSymbol.EndDate = new DateTime(1990, 1, 1);
+
+                List<StockSymbol> stockSymbols = new List<StockSymbol>();
+                stockSymbols.Add(this._stockSymbol);
+
+                this._symbolRepository.UpdateSymbols(stockSymbols);
+
+
+
+                string s = this._stockSymbol.Symbol;
+                string strConn = System.Configuration.ConfigurationManager.ConnectionStrings["StockDataDB"].ToString();
+
+                try
+                {
+                    WorkflowInvoker.Invoke(
+                        new PeakCalculater.QuoteDownload()
+                        {
+                            Symbol = s,
+                            ConnString = strConn
+                        }
+                        );
+                    MessageBox.Show("Quote Downloading completed successfully");
+
+                }
+                catch (Exception exp)
+                {
+                    MessageBox.Show(exp.Message, "Download Error", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
             }
-            catch (Exception exp)
+        }
+
+        private void EnableControls()
+        {
+            if (this._stockSymbol != null)
             {
-                ApplicationException appExp = new ApplicationException(string.Format("Exception happend when processing {0}", s), exp);
-                exceptions.Enqueue(appExp);
+                this.pnlStockInfo.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.pnlStockInfo.Visibility = Visibility.Collapsed;
             }
         }
     }

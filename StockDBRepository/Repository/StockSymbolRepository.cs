@@ -63,5 +63,6 @@ namespace StockDownloader.StockDBRepository
                 return stockSymbol;
             }
         }
+
     }
 }

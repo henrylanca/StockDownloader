@@ -27,5 +27,13 @@ namespace StockDownloader.StockDBRepository
                     .OrderBy(q => q.QuoteDate).ToList();
             }
         }
+
+        public void DeleteAllQuotes(string symbol)
+        {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                context.Database.ExecuteSqlCommand("Delete from StockQuote Where Symbol= {0}", symbol);
+            }
+        }
     }
 }
