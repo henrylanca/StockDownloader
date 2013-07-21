@@ -58,6 +58,7 @@
     <Compile Include="CalculatePerformance.cs" />
     <Compile Include="DownloadQuotes.cs" />
     <Compile Include="DownloadSymbolInfo.cs" />
+    <Compile Include="FallEnough.cs" />
     <Compile Include="GetPeaks.cs" />
     <Compile Include="HttpLib.cs" />
     <Compile Include="PickBreakOut.cs" />

@@ -92,37 +92,46 @@ namespace Downloader
         {
             if (this._stockSymbol != null)
             {
-                StockQuoteRepository quoterepository = new StockQuoteRepository();
-                quoterepository.DeleteAllQuotes(this._stockSymbol.Symbol);
-
-                this._stockSymbol.EndDate = new DateTime(1990, 1, 1);
-
-                List<StockSymbol> stockSymbols = new List<StockSymbol>();
-                stockSymbols.Add(this._stockSymbol);
-
-                this._symbolRepository.UpdateSymbols(stockSymbols);
-
-
-
-                string s = this._stockSymbol.Symbol;
-                string strConn = System.Configuration.ConfigurationManager.ConnectionStrings["StockDataDB"].ToString();
-
-                try
+                if (MessageBox.Show(string.Format("Do you want to re-download {0}?",
+                    this._stockSymbol.Symbol), "Download Confirmation", MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    WorkflowInvoker.Invoke(
-                        new PeakCalculater.QuoteDownload()
-                        {
-                            Symbol = s,
-                            ConnString = strConn
-                        }
-                        );
-                    MessageBox.Show("Quote Downloading completed successfully");
+                    StockQuoteRepository quoteRepository = new StockQuoteRepository();
+                    quoteRepository.DeleteAllQuotes(this._stockSymbol.Symbol);
 
-                }
-                catch (Exception exp)
-                {
-                    MessageBox.Show(exp.Message, "Download Error", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    StockPeakRepository peakRepository = new StockPeakRepository();
+                    peakRepository.DeleteAllPeaks(this._stockSymbol.Symbol);
+
+                    StockPickRepository pickRepository = new StockPickRepository();
+                    pickRepository.DeleteAllPicks(this._stockSymbol.Symbol);
+
+                    this._stockSymbol.EndDate = new DateTime(1990, 1, 1);
+
+                    List<StockSymbol> stockSymbols = new List<StockSymbol>();
+                    stockSymbols.Add(this._stockSymbol);
+
+                    this._symbolRepository.UpdateSymbols(stockSymbols);
+
+                    string s = this._stockSymbol.Symbol;
+                    string strConn = System.Configuration.ConfigurationManager.ConnectionStrings["StockDataDB"].ToString();
+
+                    try
+                    {
+                        WorkflowInvoker.Invoke(
+                            new PeakCalculater.QuoteDownload()
+                            {
+                                Symbol = s,
+                                ConnString = strConn
+                            }
+                            );
+                        MessageBox.Show("Quote Downloading completed successfully");
+
+                    }
+                    catch (Exception exp)
+                    {
+                        MessageBox.Show(exp.Message, "Download Error", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
                 }
             }
         }

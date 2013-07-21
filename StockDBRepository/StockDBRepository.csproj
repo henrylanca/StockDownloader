@@ -50,6 +50,8 @@
     <Compile Include="Repository\StockCountryRepository.cs" />
     <Compile Include="Repository\StockIndexRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\StockPeakRepository.cs" />
+    <Compile Include="Repository\StockPickRepository.cs" />
     <Compile Include="Repository\StockQuoteRepository.cs" />
     <Compile Include="Repository\StockSymbolRepository.cs" />
     <Compile Include="StockCountry.cs">
