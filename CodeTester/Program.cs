@@ -22,7 +22,7 @@ namespace CodeTester
             using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
             {
                 lstSymbol = (from s in dbContext.StockSymbols
-                             //where s.Symbol =="GLW"
+                             //where s.Symbol =="GLW"d
                              orderby s.Symbol
                              select s.Symbol).ToList(); 
             }

@@ -5,7 +5,7 @@
   </x:Members>
   <sap:VirtualizedContainerService.HintSize>262,372</sap:VirtualizedContainerService.HintSize>
   <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
-  <Sequence sad:XamlDebuggerXmlReader.FileName="C:\Projects\QuoteManager\PeackCalculater\PeackCalculater\PeackCalculater\PeackCalculater\QuoteDownload.xaml" sap:VirtualizedContainerService.HintSize="222,332">
+  <Sequence sad:XamlDebuggerXmlReader.FileName="C:\Projects\QuoteManager\PeakCalculater\PeakCalculater\PeakCalculater\PeakCalculater\QuoteDownload.xaml" sap:VirtualizedContainerService.HintSize="222,332">
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>

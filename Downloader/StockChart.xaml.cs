@@ -11,8 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Activities;
 
 using StockDownloader.StockDBRepository;
+using PeakCalculater;
 
 namespace Downloader
 {
@@ -83,6 +85,30 @@ namespace Downloader
 
             if(!string.IsNullOrEmpty(this.txtSymbol.Text))
                 this.DrawChart(this.txtSymbol.Text, timeFrame);
+        }
+
+        private void btnDownload_Click(object sender, RoutedEventArgs e)
+        {
+            string s = this.txtSymbol.Text;
+            string strConn = System.Configuration.ConfigurationManager.ConnectionStrings["StockDataDB"].ToString();
+            var exceptions = new Queue<Exception>();
+
+            try
+            {
+                WorkflowInvoker.Invoke(
+                    new PeakCalculater.QuoteDownload()
+                    {
+                        Symbol = s,
+                        ConnString = strConn
+                    }
+                    );
+
+            }
+            catch (Exception exp)
+            {
+                ApplicationException appExp = new ApplicationException(string.Format("Exception happend when processing {0}", s), exp);
+                exceptions.Enqueue(appExp);
+            }
         }
     }
 }

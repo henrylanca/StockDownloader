@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="StockDataModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="StockDataModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="StockDataModelStoreContainer">
-          <EntitySet Name="StockCountry" EntityType="StockDataModel.Store.StockCountry" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockIndex" EntityType="StockDataModel.Store.StockIndex" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockIndexComponents" EntityType="StockDataModel.Store.StockIndexComponents" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockInformation" EntityType="StockDataModel.Store.StockInformation" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockPeak" EntityType="StockDataModel.Store.StockPeak" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockPick" EntityType="StockDataModel.Store.StockPick" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockPickType" EntityType="StockDataModel.Store.StockPickType" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockQuote" EntityType="StockDataModel.Store.StockQuote" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StockSymbol" EntityType="StockDataModel.Store.StockSymbol" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StockCountry" EntityType="StockDataModel.Store.StockCountry" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockIndex" EntityType="StockDataModel.Store.StockIndex" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockIndexComponents" EntityType="StockDataModel.Store.StockIndexComponents" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockInformation" EntityType="StockDataModel.Store.StockInformation" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockPeak" EntityType="StockDataModel.Store.StockPeak" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockPick" EntityType="StockDataModel.Store.StockPick" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockPickType" EntityType="StockDataModel.Store.StockPickType" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockQuote" EntityType="StockDataModel.Store.StockQuote" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="StockSymbol" EntityType="StockDataModel.Store.StockSymbol" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
           <AssociationSet Name="FK_StockIndex_StockCountry" Association="StockDataModel.Store.FK_StockIndex_StockCountry">
             <End Role="StockCountry" EntitySet="StockCountry" />
             <End Role="StockIndex" EntitySet="StockIndex" />
@@ -266,7 +266,7 @@
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="StockDataModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="StockDataModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns="http://schemas.microsoft.com/ado/2008/09/edm" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
         <EntityContainer Name="StockDataEntities" p1:LazyLoadingEnabled="true">
           <EntitySet Name="StockInformations" EntityType="StockDataModel.StockInformation" />
           <EntitySet Name="StockPeaks" EntityType="StockDataModel.StockPeak" />
@@ -512,7 +512,7 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="StockDataModelStoreContainer" CdmEntityContainer="StockDataEntities">
           <EntitySetMapping Name="StockInformations">
             <EntityTypeMapping TypeName="StockDataModel.StockInformation">
@@ -622,7 +622,7 @@
     </edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
-  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
     <Connection>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
@@ -637,6 +637,6 @@
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->
-    <Diagrams></Diagrams>
+    <Diagrams />
   </Designer>
 </edmx:Edmx>

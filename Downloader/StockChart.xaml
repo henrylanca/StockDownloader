@@ -24,10 +24,8 @@
             </StackPanel>
             
             <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
-                <TextBlock Name="txtFullInfo" VerticalAlignment="Bottom" Width="400" Margin="2" />
-
-
-                
+                <TextBlock Name="txtFullInfo" VerticalAlignment="Bottom" Width="600" Margin="2" />
+                <Button Name="btnDownload" Margin="2" VerticalAlignment="Bottom" Click="btnDownload_Click">Full Download</Button>              
             </StackPanel>
         </Grid>
 
