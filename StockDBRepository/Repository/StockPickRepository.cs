@@ -14,5 +14,17 @@ namespace StockDownloader.StockDBRepository
                 context.Database.ExecuteSqlCommand("Delete from StockPick Where Symbol= {0}", symbol);
             }
         }
+
+        public List<StockPick> GetAllPicks(string symbol)
+        {
+            using (StockDataEntities context = new StockDataEntities())
+            {
+                List<StockPick> picks = context.StockPicks
+                    .Where(s => (string.Compare(s.Symbol, symbol, true) == 0))
+                    .OrderBy(p => p.PickDate).ToList();
+
+                return picks;
+            }
+        }
     }
 }

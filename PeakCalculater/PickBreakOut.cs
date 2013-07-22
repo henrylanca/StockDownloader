@@ -31,7 +31,7 @@ namespace PeakCalculater
                                       orderby a.PickDate descending
                                       select a).FirstOrDefault();
 
-                DateTime lastDtPick = DateTime.Now.AddYears(-10);
+                DateTime lastDtPick = DateTime.Now.AddYears(-20);
 
                 if (lastPick != null)
                 {
