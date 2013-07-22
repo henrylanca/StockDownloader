@@ -45,6 +45,8 @@ namespace Downloader
 
                 if (this._stockSymbol != null)
                 {
+                    this._chartDate = DateTime.Today;
+
                     this.txtFullInfo.Text = string.Format("{0} - {1} ({2:yyyy-MM-dd} - {3:yyyy-MM-dd})",
                         this._stockSymbol.StockName, this._stockSymbol.Sector, this._stockSymbol.StartDate,
                         this._stockSymbol.EndDate);
