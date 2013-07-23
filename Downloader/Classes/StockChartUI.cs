@@ -22,6 +22,7 @@ namespace Downloader
 
         private decimal _rangeHigh;
         private decimal _rangeLow;
+        private decimal _volumeHigh;
 
 
         private List<StockQuote> _stockQuotes;
@@ -93,6 +94,12 @@ namespace Downloader
                 this._rangeHigh += margin;
                 this._rangeLow -= margin;
 
+                StockQuote highVolimeQuote = this._chartQuote.OrderByDescending(q => q.Volume).FirstOrDefault();
+                if (highVolimeQuote != null)
+                    this._volumeHigh = highVolimeQuote.Volume * 1.1m;
+                else
+                    this._volumeHigh = 100;
+
                 decimal priceGap = (this._rangeHigh - this._rangeLow) / 10;
                 decimal startPrice = this._rangeLow;
                 int xCount = this._chartQuote.Count;
@@ -160,12 +167,13 @@ namespace Downloader
                         txtDt.Text = string.Format("{0:yy-MM-dd}", quote.QuoteDate);
                         txtDt.FontSize = 10;
                         txtDt.TextAlignment = TextAlignment.Center;
+                        txtDt.Foreground = new SolidColorBrush(Colors.White);
                         Canvas.SetLeft(txtDt, lineLow.X);
                         Canvas.SetTop(txtDt, lineLow.Y);
                         this._chart.Children.Add(txtDt);
                     }
 
-
+                    //Draw Candle Stick
                     Point OpenPoint = MapQuoteToChart(iPos, quote.OpenValue);
                     Point closePoint = MapQuoteToChart(iPos, quote.CloseValue);
                     OpenPoint.X--;
@@ -193,6 +201,26 @@ namespace Downloader
                     ln.Y2 = lowPoint.Y;
                     this._chart.Children.Add(ln);
 
+
+                    //Draw Volumn Bar
+                    Point vOpenPoint = MapVolumeToChart(iPos, 0m);
+                    Point vclosePoint = MapVolumeToChart(iPos, quote.Volume);
+                    vOpenPoint.X--;
+                    vclosePoint.X++;
+
+                    Rectangle vrec = new Rectangle();
+                    vrec.Width = Math.Abs(vOpenPoint.X - vclosePoint.X) + 1;
+                    vrec.Height = Math.Abs(vOpenPoint.Y - vclosePoint.Y);
+                    Canvas.SetLeft(vrec, Math.Min(vOpenPoint.X, vclosePoint.X));
+                    Canvas.SetTop(vrec, Math.Min(vOpenPoint.Y, vclosePoint.Y));
+                    if (quote.CloseValue >= quote.OpenValue)
+                        vrec.Fill = new SolidColorBrush(Colors.Green);
+                    else
+                        vrec.Fill = new SolidColorBrush(Colors.Red);
+                    this._chart.Children.Add(vrec);
+
+
+                    //Draw Stock Pick Numner
                     List<StockPick> picks = this._pickList
                         .Where(p => p.PickDate == quote.QuoteDate).ToList();
                     if (this._timeFrame == 2)
@@ -222,7 +250,6 @@ namespace Downloader
                         this._chart.Children.Add(txtPick);
                     }
                     
-
                     iPos++;
 
                 }
@@ -235,8 +262,17 @@ namespace Downloader
         {
             Point cPoint = new Point();
             cPoint.X = x * (this._chart.Width-10) / this._chartQuote.Count;
-            cPoint.Y = this._chart.Height - 
-                (double)((price - this._rangeLow) / (this._rangeHigh - this._rangeLow)) * this._chart.Height;
+            cPoint.Y = this._chart.Height*.8 - 
+                (double)((price - this._rangeLow) / (this._rangeHigh - this._rangeLow)) * this._chart.Height* 0.8;
+            return cPoint;
+        }
+
+        private Point MapVolumeToChart(int x, decimal volumn)
+        {
+            Point cPoint = new Point();
+            cPoint.X = x * (this._chart.Width - 10) / this._chartQuote.Count;
+            cPoint.Y = this._chart.Height  -
+                (double)((volumn - 0) / (this._volumeHigh )) * this._chart.Height * 0.15;
             return cPoint;
         }
 

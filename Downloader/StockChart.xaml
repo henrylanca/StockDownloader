@@ -33,7 +33,7 @@
 
         
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="5">
-            <Canvas Name="cvChart" Width="1800" Height="500" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black">
+            <Canvas Name="cvChart" Width="1800" Height="600" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black">
 
             </Canvas>
         </ScrollViewer>
