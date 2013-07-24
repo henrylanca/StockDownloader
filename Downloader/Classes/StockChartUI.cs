@@ -88,7 +88,7 @@ namespace Downloader
             if (this._chartQuote.Count > 0)
             {
                 this._rangeHigh = this._chartQuote.OrderByDescending(q => q.HighValue).FirstOrDefault().HighValue ;
-                this._rangeLow = this._chartQuote.OrderBy(q => q.HighValue).FirstOrDefault().LowValue ;
+                this._rangeLow = this._chartQuote.OrderBy(q => q.LowValue).FirstOrDefault().LowValue ;
 
                 decimal margin = (this._rangeHigh - this._rangeLow) / 20;
                 this._rangeHigh += margin;
