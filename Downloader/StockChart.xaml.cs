@@ -179,5 +179,28 @@ namespace Downloader
 
             this._stockChartUI.DrawChart(this._chartDate);
         }
+
+        private void mnuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+
+            switch (menuItem.Name)
+            {
+                case "mnuCountry":
+                    CountryList countryList = new CountryList();
+                    countryList.Show();
+                    break;
+                case "mnuIndex":
+                    IndexList indexList = new IndexList();
+                    indexList.Show();
+                    break;
+                case "mnuUpload":
+                    SymbolUpload upload = new SymbolUpload();
+                    upload.Show();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
