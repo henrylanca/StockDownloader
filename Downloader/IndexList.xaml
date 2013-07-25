@@ -56,7 +56,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock Name="tbComponents" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" ></TextBlock>
-            <ListView Name="lvComponents" Grid.Row="1" >
+            <ListView Name="lvComponents" Grid.Row="1" SelectionChanged="lvComponents_SelectionChanged">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Symbol" Width="80" DisplayMemberBinding="{Binding Symbol}" />

@@ -29,6 +29,16 @@ namespace Downloader
         StockChartUI _stockChartUI = null;
         DateTime _chartDate = DateTime.Today;
 
+
+        public string Symbol
+        {
+            set
+            {
+                QuerySymbolInfo(value);
+            }
+        }
+
+
         public StockChart()
         {
             InitializeComponent();
@@ -36,17 +46,24 @@ namespace Downloader
             EnableControls();
         }
 
-
         private void btnGetSymbolinfo_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(this.txtSymbol.Text))
+            string symbol = this.txtSymbol.Text;
+
+            QuerySymbolInfo(symbol);
+        }
+
+        private void QuerySymbolInfo(string symbol)
+        {
+            if (!string.IsNullOrEmpty(symbol))
             {
-                this._stockSymbol = this._symbolRepository.GetSymbol(this.txtSymbol.Text);
+                this._stockSymbol = this._symbolRepository.GetSymbol(symbol);
 
                 if (this._stockSymbol != null)
                 {
                     this._chartDate = DateTime.Today;
 
+                    this.txtSymbol.Text = symbol;
                     this.txtFullInfo.Text = string.Format("{0} - {1} ({2:yyyy-MM-dd} - {3:yyyy-MM-dd})",
                         this._stockSymbol.StockName, this._stockSymbol.Sector, this._stockSymbol.StartDate,
                         this._stockSymbol.EndDate);
@@ -188,14 +205,17 @@ namespace Downloader
             {
                 case "mnuCountry":
                     CountryList countryList = new CountryList();
+                    countryList.Owner = this;
                     countryList.Show();
                     break;
                 case "mnuIndex":
                     IndexList indexList = new IndexList();
+                    indexList.Owner = this;
                     indexList.Show();
                     break;
                 case "mnuUpload":
                     SymbolUpload upload = new SymbolUpload();
+                    upload.Owner = this;
                     upload.Show();
                     break;
                 default:

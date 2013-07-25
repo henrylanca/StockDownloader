@@ -159,5 +159,19 @@ namespace Downloader
                     this.tbComponents.Text = "";
             }
         }
+
+        private void lvComponents_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.lvComponents.SelectedItem != null)
+            {
+                StockSymbol stocksymbol = this.lvComponents.SelectedItem as StockSymbol;
+
+                if (this.Owner != null)
+                {
+                    StockChart chartWnd = this.Owner as StockChart;
+                    chartWnd.Symbol = stocksymbol.Symbol;
+                }
+            }
+        }
     }
 }
