@@ -218,6 +218,11 @@ namespace Downloader
                     upload.Owner = this;
                     upload.Show();
                     break;
+                case "mnuPLChart":
+                    PLChart plChart = new PLChart();
+                    plChart.Owner = this;
+                    plChart.Show();
+                    break;
                 default:
                     break;
             }

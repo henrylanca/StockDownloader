@@ -8,6 +8,7 @@
                 <MenuItem Header="_Country" Name="mnuCountry" Click="mnuItem_Click"  />
                 <MenuItem Header="_Index" Name="mnuIndex" Click="mnuItem_Click"  />
                 <MenuItem Header="_Upload" Name="mnuUpload" Click="mnuItem_Click"  />
+                <MenuItem Header="_PL Chart" Name="mnuPLChart" Click="mnuItem_Click"  />
             </MenuItem>
         </Menu>
         <Grid>
