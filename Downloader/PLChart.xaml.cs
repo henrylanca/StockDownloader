@@ -38,7 +38,7 @@ namespace Downloader
             {
                 PurchaseDate = new DateTime(2013, 07, 26),
                 PurchasePrice = 34.75m,
-                ContractNo = 10,
+                ContractNo = 2,
                 Option = new Option()
                 {
                     Symbol = "AAPL",
@@ -52,7 +52,7 @@ namespace Downloader
 
             PLChartUI plChartUI = new PLChartUI(this.cvPLChart, this._optionComb, this.ActualWidth-20);
 
-            plChartUI.DrawChart(DateTime.Today.AddMonths(1), 440.96m, 0.02m, 0.40);
+            plChartUI.DrawChart(DateTime.Today.AddMonths(6), 440.96m, 0.02m, 0.2513);
 
             //OptionCalculator optCalculator = new OptionCalculator();
             //this._plSerious = optCalculator.CalculatePLs(this._optionComb, new DateTime(2013, 05, 20), 300, 600, 0.02m, 0.30);

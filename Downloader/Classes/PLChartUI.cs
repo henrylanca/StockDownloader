@@ -26,14 +26,16 @@ namespace Downloader
             this._optionComb = optComb;
             this._chart.Width = chartWidth;
 
-            DrawChart(DateTime.Today.AddMonths(1), 441, 0.02m, 0.40);
+            //DrawChart(DateTime.Today.AddMonths(1), 441, 0.02m, 0.40);
         }
 
         public void DrawChart(DateTime drawDate, decimal stockPrice, decimal interest, double volatility )
         {
+            this._chart.Children.Clear();
+
             OptionCalculator optCalculator = new OptionCalculator();
-            PLSerious plSerious = optCalculator.CalculatePLs(this._optionComb, drawDate, stockPrice * 0.6m,
-                stockPrice * 1.4m,  interest, volatility);            
+            PLSerious plSerious = optCalculator.CalculatePLs(this._optionComb, drawDate, stockPrice * 0.5m,
+                stockPrice * 1.5m,  interest, volatility);            
 
             Path path = new Path();
             path.Stroke = new SolidColorBrush(Colors.Red);
@@ -47,21 +49,46 @@ namespace Downloader
             this._highPL += margin;
             this._lowPL -= margin;
 
-            margin = (this._highPrice - this._lowPrice) / 10;
-            this._highPrice += margin;
-            this._lowPrice -= margin;
-            if (this._lowPrice < 0)
-                this._lowPrice = 0;
+            //Draw PL lines
+            Line xLine = new Line();
+            Point xPoint = MapPLToChart(stockPrice, 0);
+            xLine.Stroke = new SolidColorBrush(Colors.Black);
+            xLine.StrokeThickness = 3;
+            xLine.X1 = 0;
+            xLine.X2 = this._chart.Width;
+            xLine.Y1 = xPoint.Y;
+            xLine.Y2 = xPoint.Y;
+            this._chart.Children.Add(xLine);
 
-            int countMod = (plSerious.PLPointSerious.Count - 4) % 3;
-            if (countMod == 1)
+            decimal startPL = margin;
+            while (startPL <= this._highPL)
             {
-                plSerious.PLPointSerious.Add(plSerious.PLPointSerious.Last());
+                DrawPLLIne(stockPrice, startPL);
+
+                startPL += margin;
             }
-            else if (countMod == 2)
+
+            startPL = margin * -1;
+            while (startPL >= this._lowPL)
             {
-                plSerious.PLPointSerious.Add(plSerious.PLPointSerious.Last());
-                plSerious.PLPointSerious.Add(plSerious.PLPointSerious.Last());
+                DrawPLLIne(stockPrice, startPL);
+
+                startPL -= margin;
+            }
+
+            //Draw Price Lines
+            decimal priceMargin = (this._highPrice - this._lowPrice) / 15;
+            decimal startPrice = stockPrice;
+            while (startPrice <= this._highPrice)
+            {
+                DrowPriceLine(startPrice, 0);
+                startPrice += priceMargin;
+            }
+            startPrice = stockPrice;
+            while (startPrice >= this._lowPrice)
+            {
+                DrowPriceLine(startPrice, 0);
+                startPrice -= priceMargin;
             }
 
             StringBuilder pathDate = new StringBuilder();
@@ -93,6 +120,50 @@ namespace Downloader
 
             this._chart.Children.Add(path);
 
+        }
+
+        private void DrawPLLIne(decimal stockPrice, decimal startPL)
+        {
+            Line plLine = new Line();
+            Point plPoint = MapPLToChart(stockPrice, startPL);
+            plLine.Stroke = new SolidColorBrush(Colors.Black);
+            plLine.StrokeThickness = 1;
+            plLine.X1 = 0;
+            plLine.X2 = this._chart.Width;
+            plLine.Y1 = plPoint.Y;
+            plLine.Y2 = plPoint.Y;
+            this._chart.Children.Add(plLine);
+
+            TextBox txtPL = new TextBox();
+            txtPL.Text = string.Format("{0:C}", startPL);
+            txtPL.FontSize = 8;
+            txtPL.TextAlignment = TextAlignment.Center;
+            txtPL.Foreground = new SolidColorBrush(Colors.Blue);
+            Canvas.SetLeft(txtPL, this._chart.Width / 2);
+            Canvas.SetTop(txtPL, plPoint.Y - 10);
+            this._chart.Children.Add(txtPL);
+        }
+
+        private void DrowPriceLine(decimal stockPrice, decimal PL)
+        {
+            Line priceLine = new Line();
+            Point plPoint = MapPLToChart(stockPrice, 0);
+            priceLine.Stroke = new SolidColorBrush(Colors.Black);
+            priceLine.StrokeThickness = 1;
+            priceLine.X1 = plPoint.X;
+            priceLine.X2 = plPoint.X;
+            priceLine.Y1 = 0;
+            priceLine.Y2 = this._chart.Height;
+            this._chart.Children.Add(priceLine);
+
+            TextBox txtPrice = new TextBox();
+            txtPrice.Text = string.Format("{0:C}", stockPrice);
+            txtPrice.FontSize = 8;
+            txtPrice.TextAlignment = TextAlignment.Center;
+            txtPrice.Foreground = new SolidColorBrush(Colors.Blue);
+            Canvas.SetLeft(txtPrice, plPoint.X );
+            Canvas.SetTop(txtPrice, this._chart.Height-10);
+            this._chart.Children.Add(txtPrice);
         }
 
         private Point MapPLToChart(decimal price, decimal pl)
