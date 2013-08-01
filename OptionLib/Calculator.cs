@@ -12,6 +12,8 @@ namespace TradingWizard.StrategyAnalysis.OptionLib
             DateTime calculationDate, double volatility)
         {
             double t = opt.ExpiryDate.Subtract(calculationDate).Days / 365.0;
+            if (t < 0)
+                t = 0.0;
 
             double d1 = (Math.Log((double)(equityPrice / opt.Strike), Math.E)
                 + ((double)(interest) + volatility * volatility / 2) * t) / (volatility * Math.Sqrt(t));

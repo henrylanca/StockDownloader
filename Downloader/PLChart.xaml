@@ -3,12 +3,65 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PLChart" Height="500" Width="600">
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Button Name="btnDrawChart" Click="btnDrawChart_Click">Draw Chart</Button>
+
         <Canvas Name="cvPLChart" Height="400">
-            <!--
-            <Path Stroke="DarkGoldenRod" StrokeThickness="3" 
-Data="M 100,200 C 250,250 300,250 350,250 M 350,250 410,250 450,250 480,250" />
-            -->
+
         </Canvas>
+        <Grid HorizontalAlignment="Stretch" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+            
+            <Separator Grid.Row="0"></Separator>
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <TextBlock Text="Strike" Width="100" Margin="2" FontWeight="Bold" FontFamily="Arial" />
+                <TextBlock Text="Expiry Date" Width="100" Margin="2" FontWeight="Bold" FontFamily="Arial" />
+                <TextBlock Text="Price" Width="100" Margin="2" FontWeight="Bold" FontFamily="Arial" />
+                <TextBlock Text="Contract" Width="100" Margin="2" FontWeight="Bold" FontFamily="Arial" />
+                <TextBlock Text="Call?" Width="50" Margin="2" FontWeight="Bold" FontFamily="Arial" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <TextBox Name="txtStrike" Width="100" Margin="2" />
+                <TextBox Name="txtExpiryDate" Width="100" Margin="2" />
+                <TextBox Name="txtPrice" Width="100" Margin="2" />
+                <TextBox Name="txtContract" Width="100" Margin="2" />
+                <CheckBox Name="chkCall" Width="50" Margin="2" />
+                <Button Name="btnSave" Width="50" Margin="2" Click="btnOptionCMD_Click">Save</Button>
+                <Button Name="btnDelete" Width="50" Margin="2" Click="btnOptionCMD_Click">Delete</Button>
+                <Button Name="btnClear" Width="50" Margin="2" Click="btnOptionCMD_Click">Clear</Button>
+            </StackPanel>
+            
+            <ListView Name="lvOptions" Grid.Row="3">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Strike" Width="80" DisplayMemberBinding="{Binding Option.Strike}" />
+                        <GridViewColumn Header="Expiry Date" Width="100" DisplayMemberBinding="{Binding Option.ExpiryDate}" />
+                        <GridViewColumn Header="Price" Width="100" DisplayMemberBinding="{Binding PurchasePrice}" />
+                        <GridViewColumn Header="Contract" Width="100" DisplayMemberBinding="{Binding ContractNo}" />
+                        <GridViewColumn Header="Is Call" Width="100" DisplayMemberBinding="{Binding Option.IsCall}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <TextBlock Text="Stock Price:" Margin="2"></TextBlock>
+                <TextBox Name="txtStockPrice" Margin="2,2,20,2" Width="60"></TextBox>                
+                
+                <TextBlock Text="Interest:" Margin="2"></TextBlock>
+                <TextBox Name="txtInterest" Margin="2,2,20,2" Width="60"></TextBox>
+
+                <TextBlock Text="Volatility:" Margin="2"></TextBlock>
+                <TextBox Name="txtVolatility" Margin="2,2,20,2" Width="60"></TextBox>
+                
+                <!--<TextBlock Text="Purchase Date" Margin="2"></TextBlock>
+                <TextBox Name="txtPurchaseDate" Margin="2,2,20,2" Width="100"></TextBox>-->
+                
+                <Button Name="btnDrawChart" Click="btnDrawChart_Click" Margin="2" Width="100">Draw Chart</Button>
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </Window>
