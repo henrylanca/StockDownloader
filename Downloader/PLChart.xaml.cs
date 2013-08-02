@@ -55,7 +55,7 @@ namespace Downloader
 
             PLChartUI plChartUI = new PLChartUI(this.cvPLChart, this._optionComb, this.ActualWidth-20);
 
-            plChartUI.DrawChart(DateTime.Today.AddMonths(6), 440.96m, 0.02m, 0.2513);
+            //plChartUI.DrawChart(DateTime.Today.AddMonths(6), 440.96m, 0.02m, 0.2513);
         }
 
         private void btnDrawChart_Click(object sender, RoutedEventArgs e)
@@ -69,7 +69,8 @@ namespace Downloader
             PLChartUI plChartUI = new PLChartUI(this.cvPLChart, this._optionComb, this.ActualWidth - 20);
 
             plChartUI.DrawChart(DateTime.Today.AddMonths(3), 
-                Convert.ToDecimal(this.txtStockPrice.Text), Convert.ToDecimal(this.txtInterest.Text), 
+                Convert.ToDecimal(this.txtStockPrice.Text), Convert.ToDecimal(this.txtPriceRange.Text),
+                Convert.ToDecimal(this.txtInterest.Text), 
                 Convert.ToDouble(this.txtVolatility.Text));
         }
 

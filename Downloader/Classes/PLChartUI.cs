@@ -29,13 +29,13 @@ namespace Downloader
             //DrawChart(DateTime.Today.AddMonths(1), 441, 0.02m, 0.40);
         }
 
-        public void DrawChart(DateTime drawDate, decimal stockPrice, decimal interest, double volatility )
+        public void DrawChart(DateTime drawDate, decimal stockPrice, decimal priceRange, decimal interest, double volatility )
         {
             this._chart.Children.Clear();
 
             OptionCalculator optCalculator = new OptionCalculator();
-            PLSerious plSerious = optCalculator.CalculatePLs(this._optionComb, drawDate, stockPrice * 0.5m,
-                stockPrice * 1.5m,  interest, volatility);            
+            PLSerious plSerious = optCalculator.CalculatePLs(this._optionComb, drawDate, stockPrice * (1-priceRange),
+                stockPrice * (1+priceRange),  interest, volatility);            
 
             Path path = new Path();
             path.Stroke = new SolidColorBrush(Colors.Red);

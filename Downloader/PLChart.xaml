@@ -49,8 +49,11 @@
             
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <TextBlock Text="Stock Price:" Margin="2"></TextBlock>
-                <TextBox Name="txtStockPrice" Margin="2,2,20,2" Width="60"></TextBox>                
-                
+                <TextBox Name="txtStockPrice" Margin="2,2,20,2" Width="60"></TextBox>
+
+                <TextBlock Text="Price range:" Margin="2"></TextBlock>
+                <TextBox Name="txtPriceRange" Margin="2,2,20,2" Width="60"></TextBox>
+
                 <TextBlock Text="Interest:" Margin="2"></TextBlock>
                 <TextBox Name="txtInterest" Margin="2,2,20,2" Width="60"></TextBox>
 
