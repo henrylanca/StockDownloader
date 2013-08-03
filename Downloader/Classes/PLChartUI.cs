@@ -66,7 +66,7 @@ namespace Downloader
                     this._highPrice = highPrice;
             }
 
-            decimal margin = (this._highPL - this._lowPL) / 20;
+            decimal margin = (this._highPL - this._lowPL) / 10;
             this._highPL += margin;
             this._lowPL -= margin;
 

@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TradingWizard.StrategyAnalysis.OptionLib;
+using Microsoft.Win32;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace Downloader
 {
@@ -141,6 +144,113 @@ namespace Downloader
                 //else
                 //    this.tbComponents.Text = "";
             }
+        }
+
+        private void btnSaveChart_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+
+            dlg.DefaultExt = ".pl";
+            dlg.Filter = "PL File (.pl)|*.pl";
+            bool? result = dlg.ShowDialog();
+
+            if (result==true)
+            {
+                string filename = dlg.FileName;
+
+                PLSetting plSetting = new PLSetting();
+
+                //foreach (OpenOption openOpt in this._optionComb.Options)
+                //{
+                //    plSetting.OptionList.Add(openOpt);
+                //}
+
+                plSetting.OptionList = this._openOptions;
+                plSetting.DrawDate = Convert.ToDateTime(this.txtDrawDate.Text);
+                plSetting.StockPrice = Convert.ToDecimal(this.txtStockPrice.Text);
+                plSetting.PriceRange = Convert.ToDecimal(this.txtPriceRange.Text);
+                plSetting.Interest = Convert.ToDecimal(this.txtInterest.Text);
+                plSetting.Volatility = Convert.ToDouble(this.txtVolatility.Text);
+
+                PLSetting.SavePLSettingToFile(plSetting, filename);
+
+            }
+        }
+
+        private void btnLoadChart_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+
+            dlg.DefaultExt = ".pl";
+            dlg.Filter = "PL File (.pl)|*.pl";
+            bool? result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                string filename = dlg.FileName;
+
+                PLSetting plSetting = PLSetting.LoadPLSettingFromFile(filename);
+
+                this._openOptions.Clear();
+                foreach (var opt in plSetting.OptionList)
+                    this._openOptions.Add(opt);
+                this.txtDrawDate.Text = string.Format("{0:yyyy-MM-dd}", plSetting.DrawDate);
+                this.txtStockPrice.Text = plSetting.StockPrice.ToString();
+                this.txtPriceRange.Text = plSetting.PriceRange.ToString();
+                this.txtInterest.Text = plSetting.Interest.ToString();
+                this.txtVolatility.Text = plSetting.Volatility.ToString();
+            }
+        }
+
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            this._openOptions.Clear();
+        }
+    }
+
+    public class PLSetting
+    {
+        public ObservableCollection<OpenOption> OptionList { get; set; }
+
+        public DateTime DrawDate {get; set;}
+
+        public decimal StockPrice {get; set;}
+
+        public decimal PriceRange {get; set;}
+
+        public decimal Interest {get; set;}
+
+        public Double Volatility {get; set;}
+
+        //public PLSetting()
+        //{
+        //    this.OptionList = new List<OpenOption>();
+        //}
+
+        public static void SavePLSettingToFile(PLSetting plSetting, string filePath)
+        {
+            var serializer = new XmlSerializer(typeof(PLSetting));
+
+            using (var writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, plSetting);
+            }
+        }
+
+        public static PLSetting LoadPLSettingFromFile(string filePath)
+        {
+            PLSetting plSetting;
+
+            XmlSerializer mySerializer = new XmlSerializer(typeof(PLSetting));
+            // To read the file, create a FileStream.
+            using (FileStream myFileStream = new FileStream(filePath, FileMode.Open))
+            {
+                // Call the Deserialize method and cast to the object type.
+                plSetting = (PLSetting)mySerializer.Deserialize(myFileStream);
+            }
+
+            return plSetting;
+
         }
     }
 
