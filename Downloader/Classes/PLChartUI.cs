@@ -112,11 +112,13 @@ namespace Downloader
                 startPrice -= priceMargin;
             }
 
-            StringBuilder pathDate = new StringBuilder();
-            int iCount = 0;
+
 
             foreach (PLSerious plSerious in plList)
             {
+                StringBuilder pathDate = new StringBuilder();
+                int iCount = 0;
+
                 foreach (PLPoint pl in plSerious.PLPointSerious)
                 {
                     int iPosition = iCount % 4;
@@ -138,6 +140,8 @@ namespace Downloader
                     {
                         pathDate.Append(string.Format(" {0},{1}", sPoint.X, sPoint.Y));
                     }
+
+                    //iCount++;
                 }
 
                 Path path = new Path();

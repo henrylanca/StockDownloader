@@ -11,28 +11,44 @@ namespace TradingWizard.StrategyAnalysis.OptionLib
         public decimal CalcualtePrice(Option opt, decimal equityPrice, decimal interest, 
             DateTime calculationDate, double volatility)
         {
-            double t = opt.ExpiryDate.Subtract(calculationDate).Days / 365.0;
-            if (t <= 0)
-                t = 1/365;
-
-            double d1 = (Math.Log((double)(equityPrice / opt.Strike), Math.E)
-                + ((double)(interest) + volatility * volatility / 2) * t) / (volatility * Math.Sqrt(t));
-            double d2 = d1 - volatility * Math.Sqrt(t);
-
-            double callDelta = NormalDistribution(d1);
-            double callPrice = (double)equityPrice * NormalDistribution(d1) -
-                (double)opt.Strike * Math.Exp(-1 * (double)interest * t) * NormalDistribution(d2);
-
-            if (opt.IsCall)
+            if (calculationDate > opt.ExpiryDate)
             {
-                return (decimal)callPrice;
+                decimal pl = 0m;
+
+                if (opt.IsCall)
+                    pl= equityPrice - opt.Strike;
+                else
+                    pl= opt.Strike - equityPrice;
+
+                if (pl < 0)
+                    pl = 0;
+
+                return pl;
             }
             else
             {
-                double putPrice = callPrice + (double)opt.Strike - (double)equityPrice - (t * (double)(opt.Strike * interest));
+                double t = opt.ExpiryDate.Subtract(calculationDate).Days / 365.0;
 
-                return (decimal)putPrice;
+                double d1 = (Math.Log((double)(equityPrice / opt.Strike), Math.E)
+                    + ((double)(interest) + volatility * volatility / 2) * t) / (volatility * Math.Sqrt(t));
+                double d2 = d1 - volatility * Math.Sqrt(t);
+
+                double callDelta = NormalDistribution(d1);
+                double callPrice = (double)equityPrice * NormalDistribution(d1) -
+                    (double)opt.Strike * Math.Exp(-1 * (double)interest * t) * NormalDistribution(d2);
+
+                if (opt.IsCall)
+                {
+                    return (decimal)callPrice;
+                }
+                else
+                {
+                    double putPrice = callPrice + (double)opt.Strike - (double)equityPrice - (t * (double)(opt.Strike * interest));
+
+                    return (decimal)putPrice;
+                }
             }
+
         }
 
         private static double NormalDistribution(double d)
