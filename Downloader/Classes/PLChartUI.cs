@@ -15,10 +15,10 @@ namespace Downloader
         private Canvas _chart;
         private OptionCombination _optionComb = new OptionCombination();
 
-        private decimal _lowPL;
-        private decimal _highPL;
-        private decimal _lowPrice;
-        private decimal _highPrice;
+        private decimal _lowPL = Decimal.MaxValue;
+        private decimal _highPL = Decimal.MinValue;
+        private decimal _lowPrice = Decimal.MaxValue;
+        private decimal _highPrice = Decimal.MinValue;
 
         public PLChartUI(Canvas chart, OptionCombination optComb, double chartWidth)
         {
@@ -34,16 +34,37 @@ namespace Downloader
             this._chart.Children.Clear();
 
             OptionCalculator optCalculator = new OptionCalculator();
-            PLSerious plSerious = optCalculator.CalculatePLs(this._optionComb, drawDate, stockPrice * (1-priceRange),
-                stockPrice * (1+priceRange),  interest, volatility);            
+            List<PLSerious> plList = new List<PLSerious>();
 
-            Path path = new Path();
-            path.Stroke = new SolidColorBrush(Colors.Red);
+            plList.Add(optCalculator.CalculatePLs(this._optionComb, drawDate.AddMonths(1), stockPrice * (1-priceRange),
+                stockPrice * (1+priceRange),  interest, volatility));
 
-            this._lowPL = plSerious.PLPointSerious.OrderBy(p => p.Profit).FirstOrDefault().Profit;
-            this._highPL = plSerious.PLPointSerious.OrderByDescending(p => p.Profit).FirstOrDefault().Profit;
-            this._lowPrice = plSerious.PLPointSerious.OrderBy(p => p.EquityPrice).FirstOrDefault().EquityPrice;
-            this._highPrice = plSerious.PLPointSerious.OrderByDescending(p => p.EquityPrice).FirstOrDefault().EquityPrice;
+            plList.Add(optCalculator.CalculatePLs(this._optionComb, drawDate.AddMonths(3), stockPrice * (1 - priceRange),
+                stockPrice * (1 + priceRange), interest, volatility));
+
+            plList.Add(optCalculator.CalculatePLs(this._optionComb, drawDate.AddMonths(6), stockPrice * (1 - priceRange),
+                stockPrice * (1 + priceRange), interest, volatility));  
+
+
+            foreach (PLSerious plSerious in plList)
+            {
+                decimal lowPL = plSerious.PLPointSerious.OrderBy(p => p.Profit).FirstOrDefault().Profit;
+                decimal highPL = plSerious.PLPointSerious.OrderByDescending(p => p.Profit).FirstOrDefault().Profit;
+                decimal lowPrice = plSerious.PLPointSerious.OrderBy(p => p.EquityPrice).FirstOrDefault().EquityPrice;
+                decimal highPrice = plSerious.PLPointSerious.OrderByDescending(p => p.EquityPrice).FirstOrDefault().EquityPrice;
+
+                if (this._lowPL > lowPL)
+                    this._lowPL = lowPL;
+
+                if (this._lowPrice > lowPrice)
+                    this._lowPrice = lowPrice;
+
+                if (this._highPL < highPL)
+                    this._highPL = highPL;
+
+                if (this._highPrice < highPrice)
+                    this._highPrice = highPrice;
+            }
 
             decimal margin = (this._highPL - this._lowPL) / 20;
             this._highPL += margin;
@@ -93,32 +114,40 @@ namespace Downloader
 
             StringBuilder pathDate = new StringBuilder();
             int iCount = 0;
-            
-            foreach (PLPoint pl in plSerious.PLPointSerious)
+
+            foreach (PLSerious plSerious in plList)
             {
-                int iPosition = iCount % 4;
-                Point sPoint = MapPLToChart(pl.EquityPrice, pl.Profit);
-
-                if (iPosition == 0)
+                foreach (PLPoint pl in plSerious.PLPointSerious)
                 {
-                    if (!string.IsNullOrEmpty(pathDate.ToString()))
+                    int iPosition = iCount % 4;
+                    Point sPoint = MapPLToChart(pl.EquityPrice, pl.Profit);
+
+                    if (iPosition == 0)
                     {
-                        pathDate.Append(string.Format(" {0},{1} ", sPoint.X, sPoint.Y));
+                        if (!string.IsNullOrEmpty(pathDate.ToString()))
+                        {
+                            pathDate.Append(string.Format(" {0},{1} ", sPoint.X, sPoint.Y));
+                        }
+                        pathDate.Append(string.Format(" M {0},{1}", sPoint.X, sPoint.Y));
                     }
-                    pathDate.Append(string.Format(" M {0},{1}", sPoint.X, sPoint.Y));
+                    else if (iPosition == 1)
+                    {
+                        pathDate.Append(string.Format(" C {0},{1}", sPoint.X, sPoint.Y));
+                    }
+                    else
+                    {
+                        pathDate.Append(string.Format(" {0},{1}", sPoint.X, sPoint.Y));
+                    }
                 }
-                else if (iPosition == 1)
-                {
-                    pathDate.Append(string.Format(" C {0},{1}", sPoint.X, sPoint.Y));
-                }
-                else
-                {
-                    pathDate.Append(string.Format(" {0},{1}", sPoint.X, sPoint.Y));
-                }
-            }
-            path.Data = Geometry.Parse(pathDate.ToString());
 
-            this._chart.Children.Add(path);
+                Path path = new Path();
+                path.Stroke = new SolidColorBrush(Colors.Red);
+                
+                path.Data = Geometry.Parse(pathDate.ToString());
+
+                this._chart.Children.Add(path);
+            }
+
 
         }
 

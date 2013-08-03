@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Downloader.PLChart"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PLChart" Height="500" Width="600">
+        Title="PLChart" Height="700" Width="900">
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
         <Canvas Name="cvPLChart" Height="400">
@@ -35,7 +35,7 @@
                 <Button Name="btnClear" Width="50" Margin="2" Click="btnOptionCMD_Click">Clear</Button>
             </StackPanel>
             
-            <ListView Name="lvOptions" Grid.Row="3">
+            <ListView Name="lvOptions" Grid.Row="3" SelectionChanged="lvOptions_SelectionChanged">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Strike" Width="80" DisplayMemberBinding="{Binding Option.Strike}" />
@@ -49,19 +49,19 @@
             
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <TextBlock Text="Stock Price:" Margin="2"></TextBlock>
-                <TextBox Name="txtStockPrice" Margin="2,2,20,2" Width="60"></TextBox>
+                <TextBox Name="txtStockPrice" Margin="2,2,20,2" Width="60">30.00</TextBox>
 
                 <TextBlock Text="Price range:" Margin="2"></TextBlock>
-                <TextBox Name="txtPriceRange" Margin="2,2,20,2" Width="60"></TextBox>
+                <TextBox Name="txtPriceRange" Margin="2,2,20,2" Width="60">0.4</TextBox>
 
                 <TextBlock Text="Interest:" Margin="2"></TextBlock>
-                <TextBox Name="txtInterest" Margin="2,2,20,2" Width="60"></TextBox>
+                <TextBox Name="txtInterest" Margin="2,2,20,2" Width="60">0.02</TextBox>
 
                 <TextBlock Text="Volatility:" Margin="2"></TextBlock>
-                <TextBox Name="txtVolatility" Margin="2,2,20,2" Width="60"></TextBox>
+                <TextBox Name="txtVolatility" Margin="2,2,20,2" Width="60">0.30</TextBox>
                 
-                <!--<TextBlock Text="Purchase Date" Margin="2"></TextBlock>
-                <TextBox Name="txtPurchaseDate" Margin="2,2,20,2" Width="100"></TextBox>-->
+                <TextBlock Text="Draw Date" Margin="2"></TextBlock>
+                <TextBox Name="txtDrawDate" Margin="2,2,20,2" Width="100"></TextBox>
                 
                 <Button Name="btnDrawChart" Click="btnDrawChart_Click" Margin="2" Width="100">Draw Chart</Button>
             </StackPanel>
