@@ -14,19 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionLib", "OptionLib\OptionLib.csproj", "{86D38D9F-8B43-483D-B489-35FE780738F9}"
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 3
-		SccProjectName0 = \u0022$/PeackCalculate/PeackCalculater\u0022,\u0020CAAAAAAA
-		SccLocalPath0 = ..
-		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
-		SccProjectFilePathRelativizedFromConnection0 = StockDownloader\\
-		SccProjectUniqueName1 = CodeTester\\CodeTester.csproj
-		SccProjectName1 = \u0022$/PeackCalculate/PeackCalculater/CodeTester\u0022,\u0020FAAAAAAA
-		SccLocalPath1 = CodeTester
-		SccProjectUniqueName2 = DBModel\\DBModel.csproj
-		SccProjectName2 = \u0022$/PeackCalculate/PeackCalculater/DBModel\u0022,\u0020MAAAAAAA
-		SccLocalPath2 = DBModel
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
