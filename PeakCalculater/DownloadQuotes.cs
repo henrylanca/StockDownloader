@@ -36,7 +36,7 @@ namespace PeakCalculater
                     throw new ApplicationException("Cannot find Symbol: " + symbol);
 
                 DateTime startDate = sSymbol.EndDate.HasValue ? sSymbol.EndDate.Value  : new DateTime(1990,1,1);
-                DateTime endDate = DateTime.Now;
+                DateTime endDate = Helper.GetEndDate(DateTime.Now);
 
                 while (startDate.DayOfWeek != DayOfWeek.Saturday)
                     startDate = startDate.AddDays(-1);

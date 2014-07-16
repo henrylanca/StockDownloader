@@ -8,35 +8,51 @@ using System.Threading.Tasks;
 
 using DBModel;
 using PeakCalculater;
+using System.IO;
+using System.Reflection;
+using System.Threading;
 
 
 namespace CodeTester
 {
     class Program
     {
+        private static bool _inServiceFlag = false;
+
         static void Main(string[] args)
         {
-            string strConn = System.Configuration.ConfigurationManager.ConnectionStrings["DBModel.Properties.Settings.StockDataConnectionString"].ToString(); 
+
+            StartDownload();
+
+        }
+
+
+        private static void StartDownload()
+        {
+            string strConn = System.Configuration.ConfigurationManager.ConnectionStrings["DBModel.Properties.Settings.StockDataConnectionString"].ToString();
             List<string> lstSymbol = new List<string>();
+
+            DateTime lastEndDate = Helper.GetEndDate(DateTime.Today);
 
             using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
             {
                 lstSymbol = (from s in dbContext.StockSymbols
-                             //where s.Symbol =="GLW"d
+                             where (s.EndDate < lastEndDate || s.EndDate==null)
+                             //and s.Symbol =="GLW"d
                              orderby s.Symbol
-                             select s.Symbol).ToList(); 
+                             select s.Symbol).ToList();
             }
 
             var exceptions = new Queue<Exception>();
 
             ParallelOptions pOptions = new ParallelOptions { MaxDegreeOfParallelism = 10 };
 
-            Parallel.ForEach(lstSymbol,pOptions, s =>
+            Parallel.ForEach(lstSymbol, pOptions, s =>
             {
-                Console.WriteLine(string.Format("Processing {0}", s));
-
                 try
                 {
+                    Console.WriteLine(string.Format("Processing {0}", s));
+
                     WorkflowInvoker.Invoke(
                         new PeakCalculater.QuoteDownload()
                         {
@@ -44,49 +60,25 @@ namespace CodeTester
                             ConnString = strConn
                         }
                         );
-                    
+
                 }
                 catch (Exception e)
                 {
-                    ApplicationException appExp = new ApplicationException(string.Format("Exception happend when processing {0}",s),e);
+                    ApplicationException appExp = new ApplicationException(string.Format("Exception happend when processing {0}", s), e);
                     exceptions.Enqueue(appExp);
                 }
             }
             );
 
-            //using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
-            //{
-            //    try
-            //    {
-            //        dbContext.CommandTimeout = 0;
-            //        dbContext.ExecuteCommand("Exec DBSync");
-            //    }
-            //    catch (Exception exp)
-            //    {
-            //        ApplicationException appExp = new ApplicationException("Exception happend when processing DBSync", exp);
-            //        exceptions.Enqueue(appExp);
-            //    }
-
-            //}
 
             if (exceptions.Count > 0)
-            {
-                foreach (Exception e in exceptions)
-                {
-                    Console.WriteLine(e.Message);
-                    Exception exp = e.InnerException;
-                    while (exp != null)
-                    {
-                        Console.WriteLine(exp.Message);
-                        exp = exp.InnerException;
-                    }
-                }
-
-                Console.Read();
+            {                
+                Helper.LogExceptions(exceptions.ToList());
+                Console.WriteLine("Check Exception");
+                Console.ReadLine();
             }
             else
                 Console.WriteLine("Completed");
-
         }
     }
 }

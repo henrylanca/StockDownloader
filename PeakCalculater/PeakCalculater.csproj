@@ -60,6 +60,7 @@
     <Compile Include="DownloadSymbolInfo.cs" />
     <Compile Include="FallEnough.cs" />
     <Compile Include="GetPeaks.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="HttpLib.cs" />
     <Compile Include="PickBreakOut.cs" />
     <Compile Include="PickReversal.cs" />
