@@ -14,7 +14,7 @@ namespace PeakCalculater
         public InArgument<string> MySymbol { get; set; }
         public InArgument<string> MyConnString { get; set; }
 
-        private enum TimeFrame { Day = 1, Week = 2 };
+        public enum TimeFrame { Day = 1, Week = 2 };
         private enum QuoteOrder { PriceDate = 0, OpenPrice = 1, HighPrice = 2, LowPrice = 3, ClosePrice = 4, Volume = 5, AdjustedClose = 6 };
 
         // If your activity returns a value, derive from CodeActivity<TResult>
@@ -64,6 +64,9 @@ namespace PeakCalculater
                             timeFrame = TimeFrame.Week;
 
                         #region 1. Download Quotes
+
+                        #region Old Download Code
+                        /*
                         string webAddress = "http://ichart.yahoo.com/table.csv?s=[%s]&a=[%m1]&b=[%d1]&c=[%y1]&d=[%m2]&e=[%d2]&f=[%y2]&g=[%Type]&ignore=.csv";
 
                         webAddress = webAddress.Replace("[%s]", symbol);
@@ -83,6 +86,9 @@ namespace PeakCalculater
                         webAddress = webAddress.Replace("[%Type]", dateType);
 
                         List<string> lstQuote = HttpLib.GetHttpRespsonse(webAddress);
+
+
+                        
 
                         if (lstQuote.Count > 0)
                         {
@@ -112,6 +118,29 @@ namespace PeakCalculater
 
                             dbContext.SubmitChanges();
                         }
+                        */
+                        #endregion
+
+                        var quotes = Historical.Get(symbol, startDate, endDate, (TimeFrame)(i));
+                        foreach(HistoryPrice quote in quotes)
+                        {
+                            StockQuote stockQuote = new StockQuote();
+                            decimal close = (decimal)quote.Close;
+                            decimal adjustClose = (decimal)quote.AdjClose;
+                            decimal ratio = adjustClose / close;
+
+                            stockQuote.Symbol = symbol;
+                            stockQuote.QuoteDate = quote.Date;
+                            stockQuote.OpenValue = (decimal)quote.Open * ratio;
+                            stockQuote.CloseValue = (Decimal)adjustClose;
+                            stockQuote.LowValue = (decimal)quote.Low * ratio;
+                            stockQuote.HighValue = (decimal)quote.High * ratio;
+                            stockQuote.Volume = (long)quote.Volume;
+                            stockQuote.TimeFrame = (short)timeFrame;
+
+                            dbContext.StockQuotes.InsertOnSubmit(stockQuote);
+                        }
+
                         #endregion
 
                         #region 2. Update Symbol's Start/End Date
@@ -140,7 +169,7 @@ namespace PeakCalculater
                                     symbolItem.StartDate = firstQuoteDate;
                                     symbolItem.EndDate = lastQuoteDate;
 
-                                    dbContext.SubmitChanges();
+                                    //dbContext.SubmitChanges();
                                 }
                                 catch (Exception e)
                                 {
@@ -148,8 +177,9 @@ namespace PeakCalculater
                             }
                         }
 
-                        #endregion
+                        dbContext.SubmitChanges();
                     }
+                    #endregion
                 }
 
             }

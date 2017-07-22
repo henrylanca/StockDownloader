@@ -61,10 +61,12 @@
     <Compile Include="FallEnough.cs" />
     <Compile Include="GetPeaks.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="Historical.cs" />
     <Compile Include="HttpLib.cs" />
     <Compile Include="PickBreakOut.cs" />
     <Compile Include="PickReversal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Token.cs" />
   </ItemGroup>
   <ItemGroup>
     <XamlAppDef Include="PeakCal.xaml">
