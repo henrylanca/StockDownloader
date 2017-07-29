@@ -24,165 +24,174 @@ namespace PeakCalculater
             string symbol = context.GetValue(this.MySymbol);
             string strConn = this.MyConnString.Get(context);
 
-            using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
+            try
             {
-                dbContext.CommandTimeout = 120;
 
-                StockSymbol  sSymbol = (from s in dbContext.StockSymbols
-                               where s.Symbol == symbol
-                               select s).FirstOrDefault();
- 
-                if(sSymbol == null)
-                    throw new ApplicationException("Cannot find Symbol: " + symbol);
-
-                DateTime startDate = sSymbol.EndDate.HasValue ? sSymbol.EndDate.Value  : new DateTime(1990,1,1);
-                DateTime endDate = Helper.GetEndDate(DateTime.Now);
-
-                while (startDate.DayOfWeek != DayOfWeek.Saturday)
-                    startDate = startDate.AddDays(-1);
-
-                while (endDate.DayOfWeek != DayOfWeek.Saturday)
-                    endDate = endDate.AddDays(1);
-
-                if (endDate > startDate)
+                using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
                 {
-                    var delQuotes = from s in dbContext.StockQuotes
-                                    where s.Symbol == symbol
-                                    && s.QuoteDate >= startDate && s.QuoteDate <= endDate
-                                    select s;
+                    dbContext.CommandTimeout = 120;
 
-                    dbContext.StockQuotes.DeleteAllOnSubmit(delQuotes);
-                    dbContext.SubmitChanges();  
+                    StockSymbol sSymbol = (from s in dbContext.StockSymbols
+                                           where s.Symbol == symbol
+                                           select s).FirstOrDefault();
 
+                    if (sSymbol == null)
+                        throw new ApplicationException("Cannot find Symbol: " + symbol);
 
-                    //Dowload daily quotes first; then download weekly quotes
-                    for (int i = 0; i <= 1; i++)
+                    DateTime startDate = sSymbol.EndDate.HasValue ? sSymbol.EndDate.Value : new DateTime(1990, 1, 1);
+                    DateTime endDate = Helper.GetEndDate(DateTime.Now);
+
+                    while (startDate.DayOfWeek != DayOfWeek.Saturday)
+                        startDate = startDate.AddDays(-1);
+
+                    while (endDate.DayOfWeek != DayOfWeek.Saturday)
+                        endDate = endDate.AddDays(1);
+
+                    if (endDate > startDate)
                     {
-                        TimeFrame timeFrame = TimeFrame.Day;
+                        var delQuotes = from s in dbContext.StockQuotes
+                                        where s.Symbol == symbol
+                                        && s.QuoteDate >= startDate && s.QuoteDate <= endDate
+                                        select s;
 
-                        if (i == 1)
-                            timeFrame = TimeFrame.Week;
-
-                        #region 1. Download Quotes
-
-                        #region Old Download Code
-                        /*
-                        string webAddress = "http://ichart.yahoo.com/table.csv?s=[%s]&a=[%m1]&b=[%d1]&c=[%y1]&d=[%m2]&e=[%d2]&f=[%y2]&g=[%Type]&ignore=.csv";
-
-                        webAddress = webAddress.Replace("[%s]", symbol);
-                        webAddress = webAddress.Replace("[%m1]", (startDate.Month - 1).ToString());
-                        webAddress = webAddress.Replace("[%d1]", startDate.Day.ToString());
-                        webAddress = webAddress.Replace("[%y1]", startDate.Year.ToString());
-                        webAddress = webAddress.Replace("[%m2]", (endDate.Month - 1).ToString());
-                        webAddress = webAddress.Replace("[%d2]", endDate.Day.ToString());
-                        webAddress = webAddress.Replace("[%y2]", endDate.Year.ToString());
-
-                        string dateType = string.Empty;
-                        if (timeFrame == TimeFrame.Day)
-                            dateType = "d";
-                        else if (timeFrame == TimeFrame.Week)
-                            dateType = "w";
-
-                        webAddress = webAddress.Replace("[%Type]", dateType);
-
-                        List<string> lstQuote = HttpLib.GetHttpRespsonse(webAddress);
+                        dbContext.StockQuotes.DeleteAllOnSubmit(delQuotes);
+                        dbContext.SubmitChanges();
 
 
-                        
-
-                        if (lstQuote.Count > 0)
+                        //Dowload daily quotes first; then download weekly quotes
+                        for (int i = 0; i <= 1; i++)
                         {
-                            foreach (string strQuote in lstQuote)
+                            TimeFrame timeFrame = TimeFrame.Day;
+
+                            if (i == 1)
+                                timeFrame = TimeFrame.Week;
+
+                            #region 1. Download Quotes
+
+                            #region Old Download Code
+                            /*
+                            string webAddress = "http://ichart.yahoo.com/table.csv?s=[%s]&a=[%m1]&b=[%d1]&c=[%y1]&d=[%m2]&e=[%d2]&f=[%y2]&g=[%Type]&ignore=.csv";
+
+                            webAddress = webAddress.Replace("[%s]", symbol);
+                            webAddress = webAddress.Replace("[%m1]", (startDate.Month - 1).ToString());
+                            webAddress = webAddress.Replace("[%d1]", startDate.Day.ToString());
+                            webAddress = webAddress.Replace("[%y1]", startDate.Year.ToString());
+                            webAddress = webAddress.Replace("[%m2]", (endDate.Month - 1).ToString());
+                            webAddress = webAddress.Replace("[%d2]", endDate.Day.ToString());
+                            webAddress = webAddress.Replace("[%y2]", endDate.Year.ToString());
+
+                            string dateType = string.Empty;
+                            if (timeFrame == TimeFrame.Day)
+                                dateType = "d";
+                            else if (timeFrame == TimeFrame.Week)
+                                dateType = "w";
+
+                            webAddress = webAddress.Replace("[%Type]", dateType);
+
+                            List<string> lstQuote = HttpLib.GetHttpRespsonse(webAddress);
+
+
+
+
+                            if (lstQuote.Count > 0)
                             {
-                                string[] items = strQuote.Split(',');
-
-                                if (Microsoft.VisualBasic.Information.IsDate(items[0]))
+                                foreach (string strQuote in lstQuote)
                                 {
-                                    StockQuote stockQuote = new StockQuote();
-                                    decimal close = Convert.ToDecimal(items[(int)QuoteOrder.ClosePrice]);
-                                    decimal adjustClose = Convert.ToDecimal(items[(int)QuoteOrder.AdjustedClose]);
-                                    decimal ratio = adjustClose / close;
+                                    string[] items = strQuote.Split(',');
 
-                                    stockQuote.Symbol = symbol;
-                                    stockQuote.QuoteDate = Convert.ToDateTime(items[(int)QuoteOrder.PriceDate]);
-                                    stockQuote.OpenValue = Convert.ToDecimal(items[(int)QuoteOrder.OpenPrice]) * ratio;
-                                    stockQuote.CloseValue = (Decimal)adjustClose;
-                                    stockQuote.LowValue = Convert.ToDecimal(items[(int)QuoteOrder.LowPrice]) * ratio;
-                                    stockQuote.HighValue = Convert.ToDecimal(items[(int)QuoteOrder.HighPrice]) * ratio;
-                                    stockQuote.Volume = Convert.ToInt64 (items[(int)QuoteOrder.Volume]);
-                                    stockQuote.TimeFrame = (short)timeFrame;
+                                    if (Microsoft.VisualBasic.Information.IsDate(items[0]))
+                                    {
+                                        StockQuote stockQuote = new StockQuote();
+                                        decimal close = Convert.ToDecimal(items[(int)QuoteOrder.ClosePrice]);
+                                        decimal adjustClose = Convert.ToDecimal(items[(int)QuoteOrder.AdjustedClose]);
+                                        decimal ratio = adjustClose / close;
 
-                                    dbContext.StockQuotes.InsertOnSubmit(stockQuote);                                    
+                                        stockQuote.Symbol = symbol;
+                                        stockQuote.QuoteDate = Convert.ToDateTime(items[(int)QuoteOrder.PriceDate]);
+                                        stockQuote.OpenValue = Convert.ToDecimal(items[(int)QuoteOrder.OpenPrice]) * ratio;
+                                        stockQuote.CloseValue = (Decimal)adjustClose;
+                                        stockQuote.LowValue = Convert.ToDecimal(items[(int)QuoteOrder.LowPrice]) * ratio;
+                                        stockQuote.HighValue = Convert.ToDecimal(items[(int)QuoteOrder.HighPrice]) * ratio;
+                                        stockQuote.Volume = Convert.ToInt64 (items[(int)QuoteOrder.Volume]);
+                                        stockQuote.TimeFrame = (short)timeFrame;
+
+                                        dbContext.StockQuotes.InsertOnSubmit(stockQuote);                                    
+                                    }
+                                }
+
+                                dbContext.SubmitChanges();
+                            }
+                            */
+                            #endregion
+
+                            var quotes = Historical.Get(symbol, startDate, endDate, (TimeFrame)(i));
+                            foreach (HistoryPrice quote in quotes)
+                            {
+                                StockQuote stockQuote = new StockQuote();
+                                decimal close = (decimal)quote.Close;
+                                decimal adjustClose = (decimal)quote.AdjClose;
+                                decimal ratio = close == 0 ? 0 : adjustClose / close;
+
+                                stockQuote.Symbol = symbol;
+                                stockQuote.QuoteDate = quote.Date;
+                                stockQuote.OpenValue = (decimal)quote.Open * ratio;
+                                stockQuote.CloseValue = (Decimal)adjustClose;
+                                stockQuote.LowValue = (decimal)quote.Low * ratio;
+                                stockQuote.HighValue = (decimal)quote.High * ratio;
+                                stockQuote.Volume = (long)quote.Volume;
+                                stockQuote.TimeFrame = (short)timeFrame;
+
+                                dbContext.StockQuotes.InsertOnSubmit(stockQuote);
+                            }
+
+                            #endregion
+
+                            #region 2. Update Symbol's Start/End Date
+                            if (timeFrame == TimeFrame.Day)
+                            {
+                                StockSymbol symbolItem = (from s in dbContext.StockSymbols
+                                                          where s.Symbol == symbol
+                                                          select s).SingleOrDefault();
+
+                                DateTime firstQuoteDate = (from q in dbContext.StockQuotes
+                                                           where q.Symbol == symbol
+                                                           && q.TimeFrame == (short)timeFrame
+                                                           orderby q.QuoteDate
+                                                           select q.QuoteDate).FirstOrDefault();
+
+                                DateTime lastQuoteDate = (from q in dbContext.StockQuotes
+                                                          where q.Symbol == symbol
+                                                          && q.TimeFrame == (short)timeFrame
+                                                          orderby q.QuoteDate descending
+                                                          select q.QuoteDate).FirstOrDefault();
+
+                                if (symbolItem != null)
+                                {
+                                    try
+                                    {
+                                        symbolItem.StartDate = firstQuoteDate;
+                                        symbolItem.EndDate = lastQuoteDate;
+
+                                        //dbContext.SubmitChanges();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                    }
                                 }
                             }
 
                             dbContext.SubmitChanges();
                         }
-                        */
                         #endregion
-
-                        var quotes = Historical.Get(symbol, startDate, endDate, (TimeFrame)(i));
-                        foreach(HistoryPrice quote in quotes)
-                        {
-                            StockQuote stockQuote = new StockQuote();
-                            decimal close = (decimal)quote.Close;
-                            decimal adjustClose = (decimal)quote.AdjClose;
-                            decimal ratio = adjustClose / close;
-
-                            stockQuote.Symbol = symbol;
-                            stockQuote.QuoteDate = quote.Date;
-                            stockQuote.OpenValue = (decimal)quote.Open * ratio;
-                            stockQuote.CloseValue = (Decimal)adjustClose;
-                            stockQuote.LowValue = (decimal)quote.Low * ratio;
-                            stockQuote.HighValue = (decimal)quote.High * ratio;
-                            stockQuote.Volume = (long)quote.Volume;
-                            stockQuote.TimeFrame = (short)timeFrame;
-
-                            dbContext.StockQuotes.InsertOnSubmit(stockQuote);
-                        }
-
-                        #endregion
-
-                        #region 2. Update Symbol's Start/End Date
-                        if (timeFrame == TimeFrame.Day)
-                        {
-                            StockSymbol symbolItem = (from s in dbContext.StockSymbols
-                                                      where s.Symbol == symbol
-                                                      select s).SingleOrDefault();
-
-                            DateTime firstQuoteDate = (from q in dbContext.StockQuotes
-                                                       where q.Symbol == symbol
-                                                       && q.TimeFrame == (short)timeFrame
-                                                       orderby q.QuoteDate
-                                                       select q.QuoteDate).FirstOrDefault();
-
-                            DateTime lastQuoteDate = (from q in dbContext.StockQuotes
-                                                      where q.Symbol == symbol
-                                                      && q.TimeFrame == (short)timeFrame
-                                                      orderby q.QuoteDate descending
-                                                      select q.QuoteDate).FirstOrDefault();
-
-                            if (symbolItem != null)
-                            {
-                                try
-                                {
-                                    symbolItem.StartDate = firstQuoteDate;
-                                    symbolItem.EndDate = lastQuoteDate;
-
-                                    //dbContext.SubmitChanges();
-                                }
-                                catch (Exception e)
-                                {
-                                }
-                            }
-                        }
-
-                        dbContext.SubmitChanges();
                     }
-                    #endregion
-                }
 
+                }
             }
+            catch(Exception exp)
+            {
+                throw new ApplicationException(string.Format("Quote Download Error - {0}", symbol), exp);
+            }
+
 
         }
     }
