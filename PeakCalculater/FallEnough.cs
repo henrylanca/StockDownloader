@@ -23,78 +23,83 @@ namespace PeakCalculater
 
             using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
             {
-                StockPick lastPick = (from a in dbContext.StockPicks
-                                      where a.Symbol == strSymbol
-                                      && a.PickType == 3
-                                      orderby a.PickDate descending
-                                      select a).FirstOrDefault();
-
-                DateTime lastDtPick = DateTime.Now.AddYears(-20);
-
-                if (lastPick != null)
+                for(short pickType=3; pickType<=4; pickType++)
                 {
-                    lastDtPick = lastPick.PickDate;
-                }
+                    StockPick lastPick = (from a in dbContext.StockPicks
+                                          where a.Symbol == strSymbol
+                                          && a.PickType == pickType
+                                          orderby a.PickDate descending
+                                          select a).FirstOrDefault();
 
-                List<StockQuote> lstQuote = (from a in dbContext.StockQuotes
-                                             where a.Symbol == strSymbol
-                                             && a.TimeFrame == 2
-                                             && a.QuoteDate >= lastDtPick
-                                             orderby a.QuoteDate
-                                             select a).ToList();
+                    DateTime lastDtPick = DateTime.Now.AddYears(-20);
 
-                int fallWeeks = 0;
-                StockQuote prevQuote = null;
-                int pastWeeks = 0;
-                bool startChecking = false;
-
-                foreach (StockQuote quote in lstQuote)
-                {
-                    if (quote.CloseValue < quote.OpenValue)
-                        fallWeeks++;
-                    else
-                        fallWeeks = 0;
-
-                    if (fallWeeks >= 4)
+                    if (lastPick != null)
                     {
-                        pastWeeks = 0;
-                        startChecking = true;
+                        lastDtPick = lastPick.PickDate;
                     }
 
-                    if (pastWeeks <= 8 && startChecking)
-                    {
-                        pastWeeks++;
-                    }
-                    else
-                    {
-                        startChecking = false;
-                    }
+                    List<StockQuote> lstQuote = (from a in dbContext.StockQuotes
+                                                 where a.Symbol == strSymbol
+                                                 && a.TimeFrame == (pickType==3 ? 2 : 1)
+                                                 && a.QuoteDate >= lastDtPick
+                                                 orderby a.QuoteDate
+                                                 select a).ToList();
 
-                    if (startChecking)
+                    int fallWeeks = 0;
+                    StockQuote prevQuote = null;
+                    int pastWeeks = 0;
+                    bool startChecking = false;
+
+                    foreach (StockQuote quote in lstQuote)
                     {
-                        if (quote.CloseValue > quote.OpenValue)
+                        if (quote.CloseValue < quote.OpenValue)
+                            fallWeeks++;
+                        else
+                            fallWeeks = 0;
+
+                        if (fallWeeks >= 4)
                         {
-                            string pickKey = string.Format("{0}_{1:yyyy-MM-dd}", quote.Symbol,
-                                quote.QuoteDate);
+                            pastWeeks = 0;
+                            startChecking = true;
+                        }
 
-                            if (quote.CloseValue > prevQuote.HighValue)
-                            {
-                                StockPick sp = new StockPick();
-                                sp.PickDate = quote.QuoteDate;
-                                sp.PickType = 3;
-                                sp.Symbol = quote.Symbol;
-                                sp.PickKey = pickKey;
-                                dbContext.StockPicks.InsertOnSubmit(sp);
-
-                                dbContext.SubmitChanges();
-
-                                startChecking = false;
-                            }
+                        if (pastWeeks <= 8 && startChecking)
+                        {
+                            pastWeeks++;
                         }
                         else
-                            prevQuote = quote;
+                        {
+                            startChecking = false;
+                        }
+
+                        if (startChecking)
+                        {
+                            if (quote.CloseValue > quote.OpenValue)
+                            {
+                                string pickKey = string.Format("{0}_{1:yyyy-MM-dd}_{2}", quote.Symbol,
+                                    quote.QuoteDate, pickType);
+
+                                if (quote.CloseValue > prevQuote.HighValue)
+                                {
+                                    StockPick sp = new StockPick();
+                                    sp.PickDate = quote.QuoteDate;
+                                    sp.PickType = pickType;
+                                    sp.Symbol = quote.Symbol;
+                                    sp.PickKey = pickKey;
+                                    dbContext.StockPicks.InsertOnSubmit(sp);
+
+                                    dbContext.SubmitChanges();
+
+                                    startChecking = false;
+                                }
+                            }
+                            else
+                                prevQuote = quote;
+                        }
                     }
                 }
+
+
             }
         }
 
