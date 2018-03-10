@@ -37,7 +37,7 @@ namespace CodeTester
             using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
             {
                 lstSymbol = (from s in dbContext.StockSymbols
-                             where ((s.EndDate < lastEndDate || s.EndDate==null) /* && (s.Symbol == "GLW") */ )
+                             where ((s.EndDate < lastEndDate || s.EndDate==null) /*&& (s.Symbol == "GLW")*/)
                              //and s.Symbol =="GLW"d
                              orderby s.Symbol
                              select s.Symbol).ToList();

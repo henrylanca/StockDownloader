@@ -59,11 +59,11 @@ namespace PeakCalculater
 
 
                         //Dowload daily quotes first; then download weekly quotes
-                        for (int i = 0; i <= 1; i++)
+                        for (int i = 1; i <= 2; i++)
                         {
                             TimeFrame timeFrame = TimeFrame.Day;
 
-                            if (i == 1)
+                            if (i == 2)
                                 timeFrame = TimeFrame.Week;
 
                             #region 1. Download Quotes
@@ -143,6 +143,7 @@ namespace PeakCalculater
 
                                 dbContext.StockQuotes.InsertOnSubmit(stockQuote);
                             }
+                            dbContext.SubmitChanges();
 
                             #endregion
 
@@ -172,7 +173,7 @@ namespace PeakCalculater
                                         symbolItem.StartDate = firstQuoteDate;
                                         symbolItem.EndDate = lastQuoteDate;
 
-                                        //dbContext.SubmitChanges();
+                                        dbContext.SubmitChanges();
                                     }
                                     catch (Exception e)
                                     {
