@@ -21,6 +21,7 @@
         <EntityTypeShape EntityType="StockDataModel.StockCountry" Width="1.5" PointX="0.51073942916036552" PointY="11.122084399276453" />
         <AssociationConnector Association="StockDataModel.FK_StockIndex_StockCountry" />
         <AssociationConnector Association="StockDataModel.FK_StockSymbol_StockCountry" />
+        <EntityTypeShape EntityType="StockDataModel.StockQuoteExtent" Width="2" PointX="5.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Activities;
-
-using DBModel;
+using StockDownloader.StockDBRepository;
 
 namespace PeakCalculater
 {
@@ -27,9 +26,9 @@ namespace PeakCalculater
             try
             {
 
-                using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
+                using (StockDataEntities dbContext = new StockDataEntities())
                 {
-                    dbContext.CommandTimeout = 120;
+                    //dbContext.CommandTimeout = 120;
 
                     StockSymbol sSymbol = (from s in dbContext.StockSymbols
                                            where s.Symbol == symbol
@@ -54,12 +53,12 @@ namespace PeakCalculater
                                         && s.QuoteDate >= startDate && s.QuoteDate <= endDate
                                         select s;
 
-                        dbContext.StockQuotes.DeleteAllOnSubmit(delQuotes);
-                        dbContext.SubmitChanges();
+                        dbContext.StockQuotes.RemoveRange(delQuotes);
+                        dbContext.SaveChanges();
 
 
                         //Dowload daily quotes first; then download weekly quotes
-                        for (int i = 1; i <= 2; i++)
+                        for (int i = 2; i <= 2; i++)
                         {
                             TimeFrame timeFrame = TimeFrame.Day;
 
@@ -67,62 +66,6 @@ namespace PeakCalculater
                                 timeFrame = TimeFrame.Week;
 
                             #region 1. Download Quotes
-
-                            #region Old Download Code
-                            /*
-                            string webAddress = "http://ichart.yahoo.com/table.csv?s=[%s]&a=[%m1]&b=[%d1]&c=[%y1]&d=[%m2]&e=[%d2]&f=[%y2]&g=[%Type]&ignore=.csv";
-
-                            webAddress = webAddress.Replace("[%s]", symbol);
-                            webAddress = webAddress.Replace("[%m1]", (startDate.Month - 1).ToString());
-                            webAddress = webAddress.Replace("[%d1]", startDate.Day.ToString());
-                            webAddress = webAddress.Replace("[%y1]", startDate.Year.ToString());
-                            webAddress = webAddress.Replace("[%m2]", (endDate.Month - 1).ToString());
-                            webAddress = webAddress.Replace("[%d2]", endDate.Day.ToString());
-                            webAddress = webAddress.Replace("[%y2]", endDate.Year.ToString());
-
-                            string dateType = string.Empty;
-                            if (timeFrame == TimeFrame.Day)
-                                dateType = "d";
-                            else if (timeFrame == TimeFrame.Week)
-                                dateType = "w";
-
-                            webAddress = webAddress.Replace("[%Type]", dateType);
-
-                            List<string> lstQuote = HttpLib.GetHttpRespsonse(webAddress);
-
-
-
-
-                            if (lstQuote.Count > 0)
-                            {
-                                foreach (string strQuote in lstQuote)
-                                {
-                                    string[] items = strQuote.Split(',');
-
-                                    if (Microsoft.VisualBasic.Information.IsDate(items[0]))
-                                    {
-                                        StockQuote stockQuote = new StockQuote();
-                                        decimal close = Convert.ToDecimal(items[(int)QuoteOrder.ClosePrice]);
-                                        decimal adjustClose = Convert.ToDecimal(items[(int)QuoteOrder.AdjustedClose]);
-                                        decimal ratio = adjustClose / close;
-
-                                        stockQuote.Symbol = symbol;
-                                        stockQuote.QuoteDate = Convert.ToDateTime(items[(int)QuoteOrder.PriceDate]);
-                                        stockQuote.OpenValue = Convert.ToDecimal(items[(int)QuoteOrder.OpenPrice]) * ratio;
-                                        stockQuote.CloseValue = (Decimal)adjustClose;
-                                        stockQuote.LowValue = Convert.ToDecimal(items[(int)QuoteOrder.LowPrice]) * ratio;
-                                        stockQuote.HighValue = Convert.ToDecimal(items[(int)QuoteOrder.HighPrice]) * ratio;
-                                        stockQuote.Volume = Convert.ToInt64 (items[(int)QuoteOrder.Volume]);
-                                        stockQuote.TimeFrame = (short)timeFrame;
-
-                                        dbContext.StockQuotes.InsertOnSubmit(stockQuote);                                    
-                                    }
-                                }
-
-                                dbContext.SubmitChanges();
-                            }
-                            */
-                            #endregion
 
                             var quotes = Historical.Get(symbol, startDate, endDate, (TimeFrame)(i));
                             foreach (HistoryPrice quote in quotes)
@@ -141,14 +84,51 @@ namespace PeakCalculater
                                 stockQuote.Volume = (long)quote.Volume;
                                 stockQuote.TimeFrame = (short)timeFrame;
 
-                                dbContext.StockQuotes.InsertOnSubmit(stockQuote);
+                                dbContext.StockQuotes.Add(stockQuote);
                             }
-                            dbContext.SubmitChanges();
+                            dbContext.SaveChanges();
 
                             #endregion
 
-                            #region 2. Update Symbol's Start/End Date
-                            if (timeFrame == TimeFrame.Day)
+                            #region 2. Calculate Extended Value
+                            {
+                                DateTime loadStartDate = new DateTime(1990, 1, 1);
+                                DateTime startCalculteDate = loadStartDate;
+
+                                StockSymbol symbolItem = (from s in dbContext.StockSymbols
+                                                          where s.Symbol == symbol
+                                                          select s).SingleOrDefault();
+
+                                if(symbolItem.EndDate.HasValue)
+                                {
+                                    loadStartDate = symbolItem.EndDate.Value.AddYears(-2);
+                                    startCalculteDate = symbolItem.EndDate.Value;
+                                }
+
+                                var delExtendQuotes = from s in dbContext.StockQuoteExtents
+                                                where s.Symbol == symbol
+                                                && s.QuoteDate >= startDate && s.QuoteDate <= endDate
+                                                select s;
+
+                                dbContext.StockQuoteExtents.RemoveRange(delExtendQuotes);
+                                dbContext.SaveChanges();
+
+                                List<StockQuote> loadQuotes = dbContext.StockQuotes.Where(q => q.Symbol == symbol && q.TimeFrame == (short)timeFrame && q.QuoteDate >= loadStartDate)
+                                    .OrderBy(q => q.QuoteDate).ToList();
+
+                                CalculateExtendedValue calculator = new CalculateExtendedValue(loadQuotes, startCalculteDate, endDate);
+
+                                var extendQuotes = calculator.Execute();
+
+                                dbContext.StockQuoteExtents.AddRange(extendQuotes);
+                                dbContext.SaveChanges();
+
+                            }
+
+                            #endregion
+
+                            #region 3. Update Symbol's Start/End Date
+                            if (timeFrame == TimeFrame.Week)
                             {
                                 StockSymbol symbolItem = (from s in dbContext.StockSymbols
                                                           where s.Symbol == symbol
@@ -173,7 +153,7 @@ namespace PeakCalculater
                                         symbolItem.StartDate = firstQuoteDate;
                                         symbolItem.EndDate = lastQuoteDate;
 
-                                        dbContext.SubmitChanges();
+                                        dbContext.SaveChanges();
                                     }
                                     catch (Exception e)
                                     {
@@ -181,7 +161,7 @@ namespace PeakCalculater
                                 }
                             }
 
-                            dbContext.SubmitChanges();
+                            dbContext.SaveChanges();
                         }
                         #endregion
                     }

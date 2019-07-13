@@ -19,6 +19,7 @@ namespace StockDownloader.StockDBRepository
             : base("name=StockDataEntities")
         {
         }
+
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -33,5 +34,6 @@ namespace StockDownloader.StockDBRepository
         public DbSet<StockSymbol> StockSymbols { get; set; }
         public DbSet<StockIndex> StockIndexes { get; set; }
         public DbSet<StockCountry> StockCountries { get; set; }
+        public DbSet<StockQuoteExtent> StockQuoteExtents { get; set; }
     }
 }

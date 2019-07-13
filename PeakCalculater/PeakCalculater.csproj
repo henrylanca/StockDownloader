@@ -41,10 +41,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Activities" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
@@ -55,6 +62,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalculateExtendedValue.cs" />
     <Compile Include="CalculatePerformance.cs" />
     <Compile Include="DownloadQuotes.cs" />
     <Compile Include="DownloadSymbolInfo.cs" />
@@ -63,6 +71,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Historical.cs" />
     <Compile Include="HttpLib.cs" />
+    <Compile Include="ExtendCalculator.cs" />
     <Compile Include="PickBreakOut.cs" />
     <Compile Include="PickReversal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,8 +85,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DBModel\DBModel.csproj">
-      <Project>{211C283A-F1E6-44B5-9834-BE54E38B43EB}</Project>
+      <Project>{211c283a-f1e6-44b5-9834-be54e38b43eb}</Project>
       <Name>DBModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StockDBRepository\StockDBRepository.csproj">
+      <Project>{03f5e7d0-ee4a-4cb5-ab35-d5ca77aefe20}</Project>
+      <Name>StockDBRepository</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </XamlAppDef>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

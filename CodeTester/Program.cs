@@ -11,7 +11,7 @@ using PeakCalculater;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-
+using StockDownloader.StockDBRepository;
 
 namespace CodeTester
 {
@@ -34,11 +34,10 @@ namespace CodeTester
 
             DateTime lastEndDate = Helper.GetEndDate(DateTime.Today);
 
-            using (StockDBDataContext dbContext = new StockDBDataContext(strConn))
+            using (StockDataEntities dbContext = new StockDataEntities())
             {
                 lstSymbol = (from s in dbContext.StockSymbols
-                             where ((s.EndDate < lastEndDate || s.EndDate==null) /*&& (s.Symbol == "GLW")*/)
-                             //and s.Symbol =="GLW"d
+                             where ((s.EndDate < lastEndDate || s.EndDate==null) /*&& (s.Symbol == "AAPL")*/)
                              orderby s.Symbol
                              select s.Symbol).ToList();
             }
