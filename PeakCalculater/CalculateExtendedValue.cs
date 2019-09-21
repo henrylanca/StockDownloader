@@ -62,17 +62,41 @@ namespace PeakCalculater
 
         private decimal CalculateVolumeWeight(List<StockQuote> quoteRange, decimal volume)
         {
-            return volume / (decimal)quoteRange.Average(q => q.Volume);
+            try
+            {
+                return volume / (decimal)quoteRange.Average(q => q.Volume);
+            }
+            catch
+            {
+                return 0;
+            }
+
         }
 
         private decimal CalcualteHighRatio(List<StockQuote> quoteRange, decimal close)
         {
-            return close / quoteRange.Max(q => q.CloseValue);
+            try
+            {
+                return close / quoteRange.Max(q => q.CloseValue);
+            }
+            catch
+            {
+                return 0;
+            }
+            
         }
 
         private decimal CalcualteLowRatio(List<StockQuote> quoteRange, decimal close)
         {
-            return close / quoteRange.Min(q => q.CloseValue);
+            try
+            {
+                return close / quoteRange.Min(q => q.CloseValue);
+            }
+            catch
+            {
+                return 0;
+            }
+            
         }
     }
 }

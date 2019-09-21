@@ -71,7 +71,6 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Historical.cs" />
     <Compile Include="HttpLib.cs" />
-    <Compile Include="ExtendCalculator.cs" />
     <Compile Include="PickBreakOut.cs" />
     <Compile Include="PickReversal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
