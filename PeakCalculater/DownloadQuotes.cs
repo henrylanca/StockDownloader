@@ -58,7 +58,7 @@ namespace PeakCalculater
 
 
                         //Dowload daily quotes first; then download weekly quotes
-                        for (int i = 2; i <= 2; i++)
+                        for (int i = 1; i <= 2; i++)
                         {
                             TimeFrame timeFrame = TimeFrame.Day;
 
@@ -108,7 +108,8 @@ namespace PeakCalculater
                                 var delExtendQuotes = from s in dbContext.StockQuoteExtents
                                                 where s.Symbol == symbol
                                                 && s.QuoteDate >= startDate && s.QuoteDate <= endDate
-                                                select s;
+                                                && s.TimeFrame == (short)timeFrame
+                                                      select s;
 
                                 dbContext.StockQuoteExtents.RemoveRange(delExtendQuotes);
                                 dbContext.SaveChanges();

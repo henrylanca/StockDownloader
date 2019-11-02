@@ -99,6 +99,7 @@
           <Property Name="Indicator" Type="smallint" Nullable="false" />
           <Property Name="TimeFrame" Type="smallint" Nullable="false" />
           <Property Name="MA" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="RSI" Type="decimal" Precision="18" Scale="3" />
           <Property Name="VolumeWeight" Type="decimal" Precision="18" Scale="3" Nullable="false" />
           <Property Name="FromHigh" Type="decimal" Precision="18" Scale="3" Nullable="false" />
           <Property Name="FromLow" Type="decimal" Precision="18" Scale="3" Nullable="false" />
@@ -525,6 +526,7 @@
           <Property Name="VolumeWeight" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
           <Property Name="FromHigh" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
           <Property Name="FromLow" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="RSI" Type="Decimal" Precision="18" Scale="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -638,6 +640,7 @@
           <EntitySetMapping Name="StockQuoteExtents">
             <EntityTypeMapping TypeName="StockDataModel.StockQuoteExtent">
               <MappingFragment StoreEntitySet="StockQuoteExtent">
+                <ScalarProperty Name="RSI" ColumnName="RSI" />
                 <ScalarProperty Name="FromLow" ColumnName="FromLow" />
                 <ScalarProperty Name="FromHigh" ColumnName="FromHigh" />
                 <ScalarProperty Name="VolumeWeight" ColumnName="VolumeWeight" />

@@ -37,14 +37,14 @@ namespace CodeTester
             using (StockDataEntities dbContext = new StockDataEntities())
             {
                 lstSymbol = (from s in dbContext.StockSymbols
-                             where ((s.EndDate < lastEndDate || s.EndDate==null) /*&& (s.Symbol == "CEI")*/)
+                             where ((s.EndDate < lastEndDate || s.EndDate==null) && (s.Symbol == "INTC"))
                              orderby s.Symbol
                              select s.Symbol).ToList();
             }
 
             var exceptions = new Queue<Exception>();
 
-            ParallelOptions pOptions = new ParallelOptions { MaxDegreeOfParallelism = 10 };
+            ParallelOptions pOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
 
             Parallel.ForEach(lstSymbol, pOptions, s =>
             {
