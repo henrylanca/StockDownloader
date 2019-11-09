@@ -58,7 +58,7 @@ namespace PeakCalculater
 
 
                         //Dowload daily quotes first; then download weekly quotes
-                        for (int i = 1; i <= 2; i++)
+                        for (int i = 2; i <= 2; i++)
                         {
                             TimeFrame timeFrame = TimeFrame.Day;
 
@@ -114,10 +114,21 @@ namespace PeakCalculater
                                 dbContext.StockQuoteExtents.RemoveRange(delExtendQuotes);
                                 dbContext.SaveChanges();
 
-                                List<StockQuote> loadQuotes = dbContext.StockQuotes.Where(q => q.Symbol == symbol && q.TimeFrame == (short)timeFrame && q.QuoteDate >= loadStartDate)
+                                DateTime prevLoadStartDate = loadStartDate.AddDays(-4);
+                                List<StockQuote> loadQuotes = dbContext.StockQuotes.Where(q => q.Symbol == symbol && q.TimeFrame == (short)timeFrame && q.QuoteDate >= prevLoadStartDate)
                                     .OrderBy(q => q.QuoteDate).ToList();
 
-                                CalculateExtendedValue calculator = new CalculateExtendedValue(loadQuotes, startCalculteDate, endDate);
+                                StockQuoteExtent prevExtQuote = dbContext.StockQuoteExtents.Where(q => q.Symbol == symbol && q.TimeFrame == (short)timeFrame && q.QuoteDate <= loadStartDate)
+                                    .OrderByDescending(q => q.QuoteDate).FirstOrDefault();
+
+                                List<StockQuoteExtent> prevQuoteExtents = null;
+                                if(prevExtQuote!=null)
+                                {
+                                    prevQuoteExtents = dbContext.StockQuoteExtents.Where(q => q.Symbol == prevExtQuote.Symbol && q.TimeFrame == (short)timeFrame && q.QuoteDate == prevExtQuote.QuoteDate)
+                                    .ToList();
+                                }
+
+                                CalculateExtendedValue calculator = new CalculateExtendedValue(loadQuotes, prevQuoteExtents, startCalculteDate, endDate);
 
                                 var extendQuotes = calculator.Execute();
 

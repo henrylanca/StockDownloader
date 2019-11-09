@@ -99,6 +99,8 @@
           <Property Name="Indicator" Type="smallint" Nullable="false" />
           <Property Name="TimeFrame" Type="smallint" Nullable="false" />
           <Property Name="MA" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="AvgGain" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="AvgLoss" Type="decimal" Precision="18" Scale="3" />
           <Property Name="RSI" Type="decimal" Precision="18" Scale="3" />
           <Property Name="VolumeWeight" Type="decimal" Precision="18" Scale="3" Nullable="false" />
           <Property Name="FromHigh" Type="decimal" Precision="18" Scale="3" Nullable="false" />
@@ -527,6 +529,8 @@
           <Property Name="FromHigh" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
           <Property Name="FromLow" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
           <Property Name="RSI" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="AvgGain" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="AvgLoss" Type="Decimal" Precision="18" Scale="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -640,6 +644,8 @@
           <EntitySetMapping Name="StockQuoteExtents">
             <EntityTypeMapping TypeName="StockDataModel.StockQuoteExtent">
               <MappingFragment StoreEntitySet="StockQuoteExtent">
+                <ScalarProperty Name="AvgLoss" ColumnName="AvgLoss" />
+                <ScalarProperty Name="AvgGain" ColumnName="AvgGain" />
                 <ScalarProperty Name="RSI" ColumnName="RSI" />
                 <ScalarProperty Name="FromLow" ColumnName="FromLow" />
                 <ScalarProperty Name="FromHigh" ColumnName="FromHigh" />

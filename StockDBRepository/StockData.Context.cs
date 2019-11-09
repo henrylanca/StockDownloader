@@ -19,7 +19,6 @@ namespace StockDownloader.StockDBRepository
             : base("name=StockDataEntities")
         {
         }
-
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

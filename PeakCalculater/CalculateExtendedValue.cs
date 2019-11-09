@@ -9,6 +9,7 @@ namespace PeakCalculater
     public class CalculateExtendedValue
     {
         private List<StockQuote> _quotes = null;
+        private List<StockQuoteExtent> _prevExtquotes = null;
         private List<StockQuoteExtent> _quoteExtends = new List<StockQuoteExtent>();
 
         private DateTime _startDate = DateTime.MinValue;
@@ -16,22 +17,33 @@ namespace PeakCalculater
 
         private short[] _indicators = new short[] { 10, 20, 50, 60, 100 };
 
-        public CalculateExtendedValue(List<StockQuote> quotes, DateTime startDate, DateTime endDate)
+        public CalculateExtendedValue(List<StockQuote> quotes, List<StockQuoteExtent> prevExtQuotes, DateTime startDate, DateTime endDate)
         {
             this._quotes = quotes;
+            this._prevExtquotes = prevExtQuotes == null ? new List<StockQuoteExtent>() : prevExtQuotes;
             this._startDate = startDate;
             this._endDate = endDate;
         }
 
         public List<StockQuoteExtent> Execute()
         {
-            var processQuotes = this._quotes.Where(q => q.QuoteDate >= this._startDate && q.QuoteDate <= this._endDate).ToList();
+            StockQuote prevQuote = null;
 
-            foreach(var item in processQuotes)
+            //var processQuotes = this._quotes.Where(q => q.QuoteDate >= this._startDate && q.QuoteDate <= this._endDate).ToList();
+
+            var processQuotes = this._quotes;
+            prevQuote = this._quotes[0];
+            foreach (var item in processQuotes)
             {
+                //Get previous quote, which is used to calculate RSI's AvgGain and AvgLoss
+                if (item.QuoteDate < this._startDate)
+                {
+                    prevQuote = item;
+                    continue;
+                }
+                    
 
-
-                foreach(short indicator in this._indicators)
+                foreach (short indicator in this._indicators)
                 {
                     StockQuoteExtent quoteExtent = new StockQuoteExtent();
                     quoteExtent.Symbol = item.Symbol;
@@ -40,19 +52,76 @@ namespace PeakCalculater
 
                     var quoteRange = this._quotes.Where(q => q.QuoteDate <= item.QuoteDate).OrderByDescending(q => q.QuoteDate)
                 .Take(indicator).ToList();
-                    var quoteRange_1 = this._quotes.Where(q => q.QuoteDate <= item.QuoteDate).OrderByDescending(q => q.QuoteDate)
-                .Take(indicator+1).ToList();
+
+                //    var quoteRangeExt = this._quotes.Where(q => q.QuoteDate <= item.QuoteDate).OrderByDescending(q => q.QuoteDate)
+                //.Take(indicator).ToList();
+
 
                     quoteExtent.Indicator = indicator;
                     quoteExtent.MA = CalculateMA(quoteRange);
-                    quoteExtent.RSI = CalculateRSI(quoteRange_1.OrderBy(q => q.QuoteDate).ToList());
+
+                    //Calculate AvgGain, AvgLoss, RSI
+                    if(this._prevExtquotes != null)
+                    {
+                        var prevQuoteExt = this._prevExtquotes.Where(q => q.Indicator == indicator).SingleOrDefault();
+                        if(prevQuoteExt!=null && prevQuoteExt.AvgGain.HasValue)
+                        {
+                            if(item.CloseValue>prevQuote.CloseValue)
+                            {
+                                quoteExtent.AvgGain = (prevQuoteExt.AvgGain.Value * (indicator - 1) + item.CloseValue - prevQuote.CloseValue) / indicator;
+                                quoteExtent.AvgLoss = (prevQuoteExt.AvgLoss.Value * (indicator - 1) + 0) / indicator;
+                            }
+                            else
+                            {
+                                quoteExtent.AvgGain = (prevQuoteExt.AvgGain.Value * (indicator - 1) + 0) / indicator;
+                                quoteExtent.AvgLoss = (prevQuoteExt.AvgLoss.Value * (indicator - 1) + Math.Abs(item.CloseValue - prevQuote.CloseValue)) / indicator;
+                            }
+
+
+                            if (quoteExtent.AvgLoss == 0)
+                                quoteExtent.RSI = 0;
+                            else
+                                quoteExtent.RSI = 100 - (100 / (1 + (quoteExtent.AvgGain / quoteExtent.AvgLoss))); ;
+                        }
+                        else
+                        {
+                            if(quoteRange.Count==indicator)
+                            {
+                                decimal sumGain = 0;
+                                decimal sumLoss = 0;
+                                decimal prevClose = quoteRange[0].CloseValue;
+
+                                foreach (var curQuote in quoteRange)
+                                {
+                                    if (prevClose >= curQuote.CloseValue)
+                                        sumGain += prevClose - curQuote.CloseValue;
+                                    else
+                                        sumLoss += curQuote.CloseValue - prevClose;
+                                }
+                                quoteExtent.AvgGain = sumGain / indicator;
+                                quoteExtent.AvgLoss = sumLoss / indicator;
+                            }
+                        }
+                    }
+
                     quoteExtent.VolumeWeight = CalculateVolumeWeight(quoteRange, item.Volume);
                     quoteExtent.FromHigh = CalcualteHighRatio(quoteRange, item.CloseValue);
                     quoteExtent.FromLow = CalcualteLowRatio(quoteRange, item.CloseValue);
 
                     this._quoteExtends.Add(quoteExtent);
+
+                    //var prevExtQuote = this._prevExtquotes.Where(q => q.Indicator == indicator).SingleOrDefault();
+                    int quoteIndex = this._prevExtquotes.FindIndex(q => q.Indicator == indicator);
+                    if (quoteIndex<0)
+                        this._prevExtquotes.Add(quoteExtent);
+                    else
+                    {
+                        this._prevExtquotes[quoteIndex] = quoteExtent;
+                    }
+                        
                 }
-            
+
+                prevQuote = item;
             }
 
             return this._quoteExtends;
@@ -63,30 +132,30 @@ namespace PeakCalculater
             return quoteRange.Average(q => q.CloseValue);
         }
 
-        private decimal CalculateRSI(List<StockQuote> quoteRange)
-        {
-            decimal sumUp = 0;
-            decimal sumDown = 0;
-            decimal rsi = 0;
+        //private decimal CalculateRSI(List<StockQuote> quoteRange)
+        //{
+        //    decimal sumUp = 0;
+        //    decimal sumDown = 0;
+        //    decimal rsi = 0;
 
-            for(int i=1; i< quoteRange.Count; i++)
-            {
-                if (quoteRange[i].CloseValue >= quoteRange[i - 1].CloseValue)
-                    sumUp += Math.Abs(quoteRange[i].CloseValue - quoteRange[i - 1].CloseValue);
-                else
-                    sumDown += Math.Abs(quoteRange[i].CloseValue - quoteRange[i - 1].CloseValue);
-            }
+        //    for(int i=1; i< quoteRange.Count; i++)
+        //    {
+        //        if (quoteRange[i].CloseValue >= quoteRange[i - 1].CloseValue)
+        //            sumUp += Math.Abs(quoteRange[i].CloseValue - quoteRange[i - 1].CloseValue);
+        //        else
+        //            sumDown += Math.Abs(quoteRange[i].CloseValue - quoteRange[i - 1].CloseValue);
+        //    }
 
-            if(sumDown == 0)
-            {
-                rsi = 100;
-            }
-            else
-            {
-                rsi = 100 - (100 / (1 + sumUp / sumDown));
-            }
-            return rsi;
-        }
+        //    if(sumDown == 0)
+        //    {
+        //        rsi = 100;
+        //    }
+        //    else
+        //    {
+        //        rsi = 100 - (100 / (1 + sumUp / sumDown));
+        //    }
+        //    return rsi;
+        //}
 
         private decimal CalculateVolumeWeight(List<StockQuote> quoteRange, decimal volume)
         {

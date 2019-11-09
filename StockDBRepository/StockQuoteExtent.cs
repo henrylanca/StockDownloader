@@ -19,10 +19,11 @@ namespace StockDownloader.StockDBRepository
         public short Indicator { get; set; }
         public short TimeFrame { get; set; }
         public decimal MA { get; set; }
-
-        public decimal RSI { get; set; }
         public decimal VolumeWeight { get; set; }
         public decimal FromHigh { get; set; }
         public decimal FromLow { get; set; }
+        public Nullable<decimal> RSI { get; set; }
+        public Nullable<decimal> AvgGain { get; set; }
+        public Nullable<decimal> AvgLoss { get; set; }
     }
 }
