@@ -44,7 +44,7 @@ namespace CodeTester
 
             var exceptions = new Queue<Exception>();
 
-            ParallelOptions pOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
+            ParallelOptions pOptions = new ParallelOptions { MaxDegreeOfParallelism = 12 };
 
             Parallel.ForEach(lstSymbol, pOptions, s =>
             {
