@@ -58,7 +58,7 @@ namespace PeakCalculater
 
 
                         //Dowload daily quotes first; then download weekly quotes
-                        for (int i = 1; i <= 2; i++)
+                        for (int i = 2; i <= 2; i++)
                         {
                             TimeFrame timeFrame = TimeFrame.Day;
 
