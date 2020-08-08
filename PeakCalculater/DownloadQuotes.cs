@@ -114,7 +114,7 @@ namespace PeakCalculater
                                 dbContext.StockQuoteExtents.RemoveRange(delExtendQuotes);
                                 dbContext.SaveChanges();
 
-                                DateTime prevLoadStartDate = loadStartDate.AddDays(-4);
+                                DateTime prevLoadStartDate = loadStartDate.AddMonths(-4);
                                 List<StockQuote> loadQuotes = dbContext.StockQuotes.Where(q => q.Symbol == symbol && q.TimeFrame == (short)timeFrame && q.QuoteDate >= prevLoadStartDate)
                                     .OrderBy(q => q.QuoteDate).ToList();
 
