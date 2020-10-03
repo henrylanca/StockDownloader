@@ -114,7 +114,7 @@ namespace PeakCalculater
                                 dbContext.StockQuoteExtents.RemoveRange(delExtendQuotes);
                                 dbContext.SaveChanges();
 
-                                DateTime prevLoadStartDate = loadStartDate.AddMonths(-4);
+                                DateTime prevLoadStartDate = loadStartDate;
                                 List<StockQuote> loadQuotes = dbContext.StockQuotes.Where(q => q.Symbol == symbol && q.TimeFrame == (short)timeFrame && q.QuoteDate >= prevLoadStartDate)
                                     .OrderBy(q => q.QuoteDate).ToList();
 
@@ -128,7 +128,7 @@ namespace PeakCalculater
                                     .ToList();
                                 }
 
-                                CalculateExtendedValue calculator = new CalculateExtendedValue(loadQuotes, prevQuoteExtents, startCalculteDate, endDate);
+                                CalculateExtendedValue calculator = new CalculateExtendedValue(loadQuotes, prevQuoteExtents, startDate, endDate);
 
                                 var extendQuotes = calculator.Execute();
 
