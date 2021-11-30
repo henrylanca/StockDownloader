@@ -47,55 +47,69 @@ namespace PeakCalculater
 
                     int fallWeeks = 0;
                     StockQuote prevQuote = null;
-                    int pastWeeks = 0;
+                    //int pastWeeks = 0;
                     bool startChecking = false;
 
                     foreach (StockQuote quote in lstQuote)
                     {
-                        if (quote.CloseValue < quote.OpenValue)
-                            fallWeeks++;
-                        else
-                            fallWeeks = 0;
+                        if(prevQuote!=null)
+                        {
+                            decimal prevHigh = Math.Max(prevQuote.OpenValue, prevQuote.CloseValue);
 
-                        if (fallWeeks >= 4)
-                        {
-                            pastWeeks = 0;
-                            startChecking = true;
-                        }
-
-                        if (pastWeeks <= 8 && startChecking)
-                        {
-                            pastWeeks++;
-                        }
-                        else
-                        {
-                            startChecking = false;
-                        }
-
-                        if (startChecking)
-                        {
-                            if (quote.CloseValue > quote.OpenValue)
+                            if (quote.CloseValue < prevHigh)
                             {
-                                string pickKey = string.Format("{0}_{1:yyyy-MM-dd}_{2}", quote.Symbol,
-                                    quote.QuoteDate, pickType);
-
-                                if (quote.CloseValue > prevQuote.HighValue)
-                                {
-                                    StockPick sp = new StockPick();
-                                    sp.PickDate = quote.QuoteDate;
-                                    sp.PickType = pickType;
-                                    sp.Symbol = quote.Symbol;
-                                    sp.PickKey = pickKey;
-                                    dbContext.StockPicks.InsertOnSubmit(sp);
-
-                                    dbContext.SubmitChanges();
-
-                                    startChecking = false;
-                                }
-                            }
+                                fallWeeks++;
+                            }                                
                             else
-                                prevQuote = quote;
+                            {
+                                fallWeeks = 0;
+                                //startChecking = false;
+                            }
+                                
+
+                            if (fallWeeks >= 5)
+                            {
+                                //pastWeeks = 0;
+                                startChecking = true;
+                            }
+
+                            //if (pastWeeks <= 8 && startChecking)
+                            //{
+                            //    pastWeeks++;
+                            //}
+                            //else
+                            //{
+                            //    startChecking = false;
+                            //}
+
+                            if (startChecking)
+                            {
+                                if (quote.CloseValue > prevHigh)
+                                {
+                                    string pickKey = string.Format("{0}_{1:yyyy-MM-dd}_{2}", quote.Symbol,
+                                        quote.QuoteDate, pickType);
+
+                                    if (quote.CloseValue > prevQuote.HighValue)
+                                    {
+                                        StockPick sp = new StockPick();
+                                        sp.PickDate = quote.QuoteDate;
+                                        sp.PickType = pickType;
+                                        sp.Symbol = quote.Symbol;
+                                        sp.PickKey = pickKey;
+                                        dbContext.StockPicks.InsertOnSubmit(sp);
+
+                                        dbContext.SubmitChanges();
+
+                                        startChecking = false;
+                                    }
+                                }
+                                //else
+                                //    prevQuote = quote;
+                            }
                         }
+
+
+                        prevQuote = quote;
                     }
                 }
 
